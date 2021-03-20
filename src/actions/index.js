@@ -4,7 +4,7 @@ import {
     GET_USER_INFO,
     LOG_OUT,
     GET_AUTHOR
-} from '../actions/index'
+} from '../constants/actionTypes'
 
 export const getBooks = (books) => {
     return {

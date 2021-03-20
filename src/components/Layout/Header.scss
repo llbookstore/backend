@@ -1,0 +1,15 @@
+.header {
+    &__container{
+        justify-content: space-between;
+        color: white
+    }
+    &__logo, &__acc-icon{
+        text-transform: uppercase;
+        font-size: large;
+        cursor: pointer;
+        &:hover {
+            color: yellowgreen;
+        }
+    }
+
+}
