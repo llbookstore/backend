@@ -6,12 +6,15 @@ import reportWebVitals from './reportWebVitals';
 import 'antd/dist/antd.css';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { store, persistor } from './createStore';
 
 ReactDOM.render(
   <Provider store={store}>
-  <PersistGate persistor={persistor}>
-    <App />
+    <PersistGate persistor={persistor}>
+      <Router>
+        <App />
+      </Router>
     </PersistGate>
   </Provider>,
   document.getElementById('root')

@@ -1,41 +1,33 @@
-import Home from './components/Home';
-
+import ListBook from './components/ListBook';
+import AddBook from './components/AddBook';
+import { AppstoreOutlined, ReadOutlined, PlusOutlined } from '@ant-design/icons'
 const router = [
+    //book
     {
-        path: '/',
+        key: 1,
+        parent: -1,
+        icon: <AppstoreOutlined />,
+        title: 'Quản lý nội dung'
+    },
+    {
+        path: '/book',
         exact: true,
-        component: Home
+        component: ListBook,
+        key: 2,
+        parent: 1,
+        isMenu: true,
+        icon: <ReadOutlined />,
+        title: 'Quản lý sách'
     },
     {
-        path: '/book/:id',
+        path: '/book/add',
         exact: true,
-        component: ProductDetail
-    },
-    {
-        path: '/favourite',
-        exact: true, 
-        component: Favourtites
-    },
-    {
-        path: '/search',
-        exact: true, 
-        component: SearchProduct
-    },
-    {
-        path: '/category/:id',
-        exact: true, 
-        component: CategoryDetail
-    },
-    {
-        path: '/cart',
-        exact: true, 
-        component: Cart
-    },
-    {
-        path: '/payment',
-        exact: true, 
-        component: Payment
-    },
+        component: AddBook,
+        key: 3,
+        parent: 1,
+        isMenu: false,
+        icon: <PlusOutlined />,
+    }
 ]
 
 export default router;

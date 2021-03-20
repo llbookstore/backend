@@ -14,7 +14,7 @@ function HeaderComponent(props) {
     </Menu.Item>
     </Menu >)
     return (
-        <Header className="header" fixed={true}>
+        <Header className="header">
             <Row className='header__container'>
                 <Col>
                     <div className="header__logo" >LLBook store</div>
