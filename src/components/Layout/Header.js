@@ -2,18 +2,19 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Layout, Row, Col, Dropdown, Avatar, Menu } from 'antd';
 import { UserOutlined } from '@ant-design/icons'
+import * as actions from '../../actions/index'
 import './Header.scss'
 const { Header } = Layout;
 
-const menu = (<Menu theme='dark'>
-    <Menu.Item key="SignOut" >
-        Đăng xuất
-                    </Menu.Item>
-</Menu >)
 function HeaderComponent(props) {
-    const { user } = props;
+    const { user, onLogout } = props;
+    const menu = (<Menu theme='dark'>
+        <Menu.Item key="SignOut" onClick={() => onLogout()}>
+            Đăng xuất
+    </Menu.Item>
+    </Menu >)
     return (
-        <Header className="header">
+        <Header className="header" fixed={true}>
             <Row className='header__container'>
                 <Col>
                     <div className="header__logo" >LLBook store</div>
@@ -33,4 +34,9 @@ const mapStateToProps = (state) => {
     const { user } = state;
     return { user };
 }
-export default connect(mapStateToProps)(HeaderComponent);
+const mapDispatchToState = (dispatch, props) => {
+    return {
+        onLogout: () => dispatch(actions.logOut())
+    }
+}
+export default connect(mapStateToProps, mapDispatchToState)(HeaderComponent);
