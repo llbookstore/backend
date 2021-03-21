@@ -37,10 +37,10 @@ const Login = (props) => {
                     message.warn('Đăng nhập không thành công!')
                 }
                 else{
-                    const userData = await axios.get(`/account/${userId}`);
-                    onGetUser(userData.data.data);
-                    //set default token
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+                    const res = await axios.get(`/account/${userId}`);
+                    const userData = res.data.data;
+                    userData.token = data.token;
+                    onGetUser(userData);
                     message.success('Đăng nhập thành công!');
                 }
             }

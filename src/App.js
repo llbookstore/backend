@@ -1,4 +1,3 @@
-
 import axios from 'axios'
 import './App.css';
 import Layout from './components/Layout/index'
@@ -6,8 +5,10 @@ import Login from './components/Login'
 import { connect } from 'react-redux'
 import { API_HOST } from './constants/config'
 function App(props) {
-  axios.defaults.baseURL = API_HOST;
   const { user } = props;
+  axios.defaults.baseURL = API_HOST;
+  axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
+
   return (
     <div className="App">
       {
