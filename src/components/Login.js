@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { Form, Input, Button, message } from 'antd'
 import axios from 'axios'
 import jwt from 'jsonwebtoken'
-import { API_HOST } from '../constants/config'
 import * as actions from '../actions/index'
 const layout = {
     labelCol: { span: 8 },
@@ -24,7 +23,6 @@ const style = {
 }
 const Login = (props) => {
     const { onGetUser } = props;
-    axios.defaults.baseURL = API_HOST;
     const onFinish = async (values) => {
         const { username, password } = values;
         const dataLogin = { username, password };
@@ -40,7 +38,6 @@ const Login = (props) => {
                 }
                 else{
                     const userData = await axios.get(`/account/${userId}`);
-                    console.log(userData.data.data, 'hihi')
                     onGetUser(userData.data.data);
                     //set default token
                     axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;

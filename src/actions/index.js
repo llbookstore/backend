@@ -9,7 +9,7 @@ import {
 export const getBooks = (books) => {
     return {
         type: GET_BOOKS,
-        data: books
+        books
     }
 }
 export const getUserInfo = (user) => {

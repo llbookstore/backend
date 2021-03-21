@@ -1,13 +1,14 @@
 import ListBook from './components/ListBook';
 import AddBook from './components/AddBook';
-import { AppstoreOutlined, ReadOutlined, PlusOutlined } from '@ant-design/icons'
+import { AppstoreOutlined, ReadOutlined } from '@ant-design/icons'
 const router = [
     //book
     {
+        path: 'nopath',
         key: 1,
         parent: -1,
         icon: <AppstoreOutlined />,
-        title: 'Quản lý nội dung'
+        title: 'Quản lý nội dung',
     },
     {
         path: '/book',
@@ -26,7 +27,6 @@ const router = [
         key: 3,
         parent: 1,
         isMenu: false,
-        icon: <PlusOutlined />,
     }
 ]
 

@@ -3,7 +3,7 @@ import { persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
 import user from './user';
-
+import books from './book';
 const persistConfig = {
     key: 'root',
     storage,
@@ -11,7 +11,7 @@ const persistConfig = {
 }
 
 const rootReducer = combineReducers({
-    user
+    user, books
 })
 
 export default persistReducer(persistConfig, rootReducer);
