@@ -65,6 +65,7 @@ const ListBook = (props) => {
                     try {
                         await axios.put(`/book/${book_id}`, {active: 0});
                         setUpdateCount(pre => pre + 1);
+                        message.success('Xóa sách thành công!');
                     } catch (err) {
                         console.log(err);
                         message.error('Có lỗi xảy ra. Hiện tại không thể xóa.')
@@ -74,6 +75,7 @@ const ListBook = (props) => {
                     try {
                         await axios.put(`/book/${book_id}`, {active: 1});
                         setUpdateCount(pre => pre + 1);
+                        message.success('Khôi phục sách thành công!');
                     } catch (err) {
                         console.log(err);
                         message.error('Có lỗi xảy ra. Hiện tại không thể khôi phục.')
@@ -175,42 +177,30 @@ const ListBook = (props) => {
         },
     ]
 
-    const getBookApi = async () => {
-        try {
-            const res = await axios.get('/books?row_per_page=10000000');
-            console.log(res);
-            setData(res.data.data.rows)
-        } catch (err) {
-            console.log(err);
-            message.error('Có lỗi trong quá trình xử lý')
-        }
-    }
     useEffect(() => {
-        console.log('sldgslgsj')
-        getBookApi();
+        handleSearch();
     }, [updateCount])
     async function handleSearch(page, pageSize) {
-        const dataParams = {};
-        if (rowPerPage) dataParams.row_per_page = rowPerPage
-        if (keyword && keyword !== '') {
-            dataParams.keyword = keyword;
-        }
-        if (statusFinding > -1) dataParams.status = statusFinding;
-        if (startTime) dataParams.timeStart = startTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).unix();
-        if (endTime) dataParams.timeEnd = endTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).unix();
-        if (currentPage) dataParams.current_page = currentPage;
+        const dataParams = {
+            row_per_page: rowPerPage,
+            current_page: currentPage
+        };
+        // if (keyword && keyword !== '') {
+        //     dataParams.keyword = keyword;
+        // }
+        // if (statusFinding > -1) dataParams.status = statusFinding;
+        // if (startTime) dataParams.timeStart = startTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).unix();
+        // if (endTime) dataParams.timeEnd = endTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).unix();
         if (page > 0) {
             setCurrentPage(page);
             dataParams.current_page = page;
         }
-        const result = await axios.get('/book', dataParams);
-        if (result && result.status === 1) {
-            const data = result.data.rows;
-            for (let item of data) {
-                item.handle_history = item.handle_history ? JSON.parse(item.handle_history) : [];
-            }
+        const result = await axios.get('/books', {params: dataParams});
+        console.log(result,'lslslsl')
+        if (result && result.data.status === 1) {
+            const data = result.data.data.rows;
             setData(data);
-            setTotal(result.data.count);
+            setTotal(result.data.data.count);
         }
     }
 
@@ -270,13 +260,12 @@ const ListBook = (props) => {
                 </Form>
             </Card>
             <Pagination
-
                 showQuickJumper
                 showSizeChanger
                 onShowSizeChange={(current, pageSize) => { setRowPerPage(pageSize); setCurrentPage(1); }}
-                // onChange={(page, pageSize) => handleSearch(page, pageSize)}
-                onChange={(page, pageSize) => setRowPerPage(pageSize)}
+                onChange={(page, pageSize) => handleSearch(page, pageSize)}
                 total={total}
+                pageSize={rowPerPage}
                 pageSizeOptions={['10', '20', '50']}
                 current={currentPage}
             />
@@ -289,17 +278,15 @@ const ListBook = (props) => {
                 style={{ paddingBottom: '20px', paddingTop: '20px' }}
             />
             <Pagination
-
                 showQuickJumper
                 showSizeChanger
                 onShowSizeChange={(current, pageSize) => { setRowPerPage(pageSize); setCurrentPage(1); }}
-                // onChange={(page, pageSize) => handleSearch(page, pageSize)}
-                onChange={(page, pageSize) => setRowPerPage(pageSize)}
+                onChange={(page, pageSize) => handleSearch(page, pageSize)}
                 total={total}
+                pageSize={rowPerPage}
                 pageSizeOptions={['10', '20', '50']}
                 current={currentPage}
             />
-
         </div>
     )
 }
