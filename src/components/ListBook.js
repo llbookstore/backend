@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
-import { useHistory, Link } from 'react-router-dom'
+import { useHistory, Link, useLocation } from 'react-router-dom'
 import {
     Button,
     Table,
@@ -20,25 +19,29 @@ import {
 } from 'antd';
 import { EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
 import axios from 'axios'
-import { getCurrentTimestamp, timestampToDate } from '../utils/common'
-import { API_HOST, RPP } from '../constants/config'
+import { getCurrentTimestamp, timestampToDate, momentObjectToDateString } from '../utils/common'
+import { API_HOST, RPP, DATE_FORMAT } from '../constants/config'
 const { Option } = Select;
-const dateFormat = 'DD/MM/YYYY';
+
 const allStatus = [
     { id: -1, value: 'Tất cả' },
     { id: 0, value: 'Đã xóa' },
-    { id: 1, value: 'Chưa xóa' },
+    { id: 1, value: 'Hoạt động' },
 ];
-
+function useQuery() {
+    return new URLSearchParams(useLocation().search);
+}
 const ListBook = (props) => {
     const history = useHistory();
+    const query = useQuery();   // do it later
+    const params = new URLSearchParams();
     const [data, setData] = useState([]);
     const [total, setTotal] = useState(0);
     const [rowPerPage, setRowPerPage] = useState(RPP);
     const [currentPage, setCurrentPage] = useState(1);
     const [startTime, setStartTime] = useState();
     const [statusFinding, setStatusFinding] = useState(-1);
-    const [keyword, setKeyWord] = useState();
+    const [keyword, setKeyWord] = useState('');
     const [endTime, setEndTime] = useState();
     const [updateCount, setUpdateCount] = useState(0);
     const columns = [
@@ -63,7 +66,7 @@ const ListBook = (props) => {
             render: record => {
                 const onDeleteBook = async (book_id) => {
                     try {
-                        await axios.put(`/book/${book_id}`, {active: 0});
+                        await axios.put(`/book/${book_id}`, { active: 0 });
                         setUpdateCount(pre => pre + 1);
                         message.success('Xóa sách thành công!');
                     } catch (err) {
@@ -73,7 +76,7 @@ const ListBook = (props) => {
                 }
                 const onRestoreBook = async (book_id) => {
                     try {
-                        await axios.put(`/book/${book_id}`, {active: 1});
+                        await axios.put(`/book/${book_id}`, { active: 1 });
                         setUpdateCount(pre => pre + 1);
                         message.success('Khôi phục sách thành công!');
                     } catch (err) {
@@ -118,7 +121,7 @@ const ListBook = (props) => {
                         <strong>Trạng thái: </strong> <br />
                         {record.active === 1 && <Tag color='#87d068'>Hoạt động</Tag>}
                         {record.active === 0 && <Tag color='#f50'>Đã xóa</Tag>}
-    
+
                     </>
                 )
             }
@@ -176,27 +179,21 @@ const ListBook = (props) => {
             )
         },
     ]
-
+   
     useEffect(() => {
         handleSearch();
     }, [updateCount])
-    async function handleSearch(page, pageSize) {
+    async function handleSearch(page = 1, pageSize = RPP) {
+        setCurrentPage(page);
         const dataParams = {
             row_per_page: rowPerPage,
-            current_page: currentPage
+            current_page: page || currentPage || 1,
+            q: keyword
         };
-        // if (keyword && keyword !== '') {
-        //     dataParams.keyword = keyword;
-        // }
-        // if (statusFinding > -1) dataParams.status = statusFinding;
-        // if (startTime) dataParams.timeStart = startTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).unix();
-        // if (endTime) dataParams.timeEnd = endTime.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).unix();
-        if (page > 0) {
-            setCurrentPage(page);
-            dataParams.current_page = page;
-        }
-        const result = await axios.get('/books', {params: dataParams});
-        console.log(result,'lslslsl')
+        if (statusFinding > -1) dataParams.active = statusFinding;
+        if (startTime) dataParams.start_time = momentObjectToDateString(startTime, 'MM-DD-YYYY');
+        if (endTime) dataParams.end_time = momentObjectToDateString(endTime, 'MM-DD-YYYY');
+        const result = await axios.get('/books', { params: dataParams });
         if (result && result.data.status === 1) {
             const data = result.data.data.rows;
             setData(data);
@@ -204,8 +201,12 @@ const ListBook = (props) => {
         }
     }
 
-    const handleSearchSubmit = (e) => {
-        e.preventDefault();
+    const handleSearchSubmit = (values) => {
+        params.append('q', keyword);
+        if (statusFinding !== -1) params.append('active',statusFinding);
+        if (!!startTime) params.append('start_time',`${momentObjectToDateString(startTime, 'DD-MM-YYYY')}`)
+        if (!!endTime) params.append('start_time',`${momentObjectToDateString(endTime, 'DD-MM-YYYY')}`)
+        history.push({ search: params.toString() });
         setUpdateCount(pre => pre + 1);
         setCurrentPage(1);
     }
@@ -226,10 +227,15 @@ const ListBook = (props) => {
                 </Col>
             </Row>
             <Card style={{ margin: '20px 0' }}>
-                <Form onSubmit={handleSearchSubmit} onKeyDown={preventEnterSubmit} className="ant-advanced-search-form">
+                <Form
+                    onFinish={handleSearchSubmit}
+                    onKeyDown={preventEnterSubmit}
+                    className="ant-advanced-search-form"
+                    initialValues={{ status: -1 }}
+                >
                     <Row gutter={24} >
                         <Col span={8}>
-                            <Form.Item label='Từ khóa'>
+                            <Form.Item label='Từ khóa' name='query'>
                                 <Input
                                     style={{ width: '100%', marginRight: '20px', marginLeft: '10px' }}
                                     onChange={(e) => setKeyWord(e.target.value)}
@@ -239,20 +245,20 @@ const ListBook = (props) => {
                             </Form.Item>
                         </Col>
                         <Col span={6}>
-                            <Form.Item label='Trạng thái'>
-                                <Select value={statusFinding} onChange={(value) => setStatusFinding(value)} style={{ width: '100%' }} >
+                            <Form.Item label='Trạng thái' name='status'>
+                                <Select value={statusFinding} onChange={(value) => setStatusFinding(value)} >
                                     {allStatus.map(item => <Option key={item.id} value={item.id}>{item.value}</Option>)}
                                 </Select>
                             </Form.Item>
                         </Col>
                         <Col span={5}>
-                            <Form.Item label='Từ'>
-                                <DatePicker onChange={(value) => setStartTime(value)} format={dateFormat} ></DatePicker>
+                            <Form.Item label='Từ' name='startTime'>
+                                <DatePicker onChange={(value) => setStartTime(value)} format={DATE_FORMAT} ></DatePicker>
                             </Form.Item>
                         </Col>
                         <Col span={5}>
-                            <Form.Item label='Đến'>
-                                <DatePicker onChange={(value) => setEndTime(value)} format={dateFormat} ></DatePicker>
+                            <Form.Item label='Đến' name='endTime'>
+                                <DatePicker onChange={(value) => setEndTime(value)} format={DATE_FORMAT} ></DatePicker>
                             </Form.Item>
                         </Col>
                     </Row>
