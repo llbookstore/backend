@@ -17,9 +17,6 @@ function App(props) {
           <Layout />
           : <Login />
       }
-      {
-        console.log(isAuth(user.token))
-      }
     </div>
   );
 }

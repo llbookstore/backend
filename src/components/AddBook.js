@@ -3,6 +3,7 @@ import {
     Form,
     Input,
     Button,
+    AutoComplete,
     Radio,
     Checkbox,
     DatePicker,
@@ -44,6 +45,8 @@ const tailFormItemLayout = {
         },
     },
 };
+
+const { TextArea } = Input;
 export default function AddBook() {
     const [form] = Form.useForm();
     const [coverImgFile, setCoverImgFile] = useState();
@@ -78,7 +81,7 @@ export default function AddBook() {
         }
     }
     const onImagePreview = () => {
-        window.open(getImageURL(coverImgFile),'_blank');
+        window.open(getImageURL(coverImgFile), '_blank');
     }
     const customRequest = async ({ file, onSuccess }) => {
         try {
@@ -109,6 +112,7 @@ export default function AddBook() {
                 setCoverImgFile('');
         }
     }
+
     return (
         <Form
             {...formItemLayout}
@@ -133,7 +137,6 @@ export default function AddBook() {
 
                         <Input autoFocus />
                     </Form.Item>
-
                     <Form.Item
                         name="description"
                         label={
@@ -149,7 +152,7 @@ export default function AddBook() {
                             }
                         ]}
                     >
-                        <Input />
+                        <TextArea />
                     </Form.Item>
                     <Form.Item
                         name="cover_image"
@@ -157,18 +160,16 @@ export default function AddBook() {
                         rules={[
                             {
                                 required: true,
-                                message: 'Vui lòng nhập mật khẩu!',
+                                message: 'Vui lòng chọn ảnh bìa!',
                             }
                         ]}
                         hasFeedback
                     >
-
                         <Upload
                             name="cover_img"
                             listType="picture-card"
                             className="avatar-uploader"
                             onChange={onCoverImageChange}
-                            // headers={{ 'content-type': 'multipart/form-data' }}
                             maxCount={1}
                             customRequest={customRequest}
                             onPreview={onImagePreview}
@@ -184,28 +185,21 @@ export default function AddBook() {
                             <UploadOutlined />
                             Upload
                         </Upload>
-
                     </Form.Item>
-
-
-
-                {/* <Form.Item
-                        name="email"
-                        label="E-mail"
+                    <Form.Item
+                        name="author"
+                        label="Tác giả"
                         rules={[
                             {
-                                type: 'email',
-                                message: 'Email không hợp lệ!',
-                            },
-                            {
                                 required: true,
-                                message: 'Vui lòng nhập E-mail!',
+                                message: 'Vui lòng chọn tác giả!',
                             },
                         ]}
                     >
+                    
                         <Input />
                     </Form.Item>
-
+                    {/*
                     <Form.Item
                         name="phone"
                         label="Số điện thoại"
@@ -353,7 +347,7 @@ export default function AddBook() {
                         <Input />
                     </Form.Item> */}
 
-                {/* <Form.Item
+                    {/* <Form.Item
                     name="phone"
                     label="Số điện thoại"
                     rules={[
@@ -373,7 +367,7 @@ export default function AddBook() {
                         }}
                     />
                 </Form.Item> */}
-
+                    {/* 
                 <Form.Item
                     name="gender"
                     label="Giới tính"
@@ -416,13 +410,13 @@ export default function AddBook() {
                 >
                     <Checkbox>
                         Tôi đã đọc và đồng ý với
-                        </Checkbox>
-                </Form.Item>
-                <Form.Item {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit">
-                        Thêm
+                        </Checkbox> 
+                </Form.Item>*/}
+                    <Form.Item {...tailFormItemLayout}>
+                        <Button type="primary" htmlType="submit">
+                            Thêm
                 </Button>
-                </Form.Item>
+                    </Form.Item>
                 </Col>
             </Row>
         </Form >
