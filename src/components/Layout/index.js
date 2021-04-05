@@ -1,16 +1,43 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { connect } from 'react-redux'
 import { Route, Switch } from 'react-router-dom'
-import { 
-    Layout, 
+import {
+    Layout,
     // Breadcrumb 
 } from 'antd';
 import './Layout.scss'
 import HeaderComponent from './Header'
 import SiderComponent from './Sider'
 import routes from '../../routes'
+import { getAuthor, getPublishingHouse, getSales } from '../../actions/index'
+import { callApi } from '../../utils/callApi';
 const { Content, Footer } = Layout;
 
-export default function LayoutPage() {
+const LayoutPage = (props) => {
+    const { onGetAuthors, onGetPublishingHouse, onGetSales } = props;
+    const getAuthors = async () => {
+        const res = await callApi('author', 'GET', { row_per_page: 100000 })
+        if(res.status === 1){
+            onGetAuthors(res.data.rows)
+        }
+    }
+    const getSalesAPI = async () => {
+        const res = await callApi('sale', 'GET')
+        if(res.status === 1){
+            onGetSales(res.data)
+        }
+    }
+    const getPublishingHouseAPI = async () => {
+        const res = await callApi('publishing_house', 'GET', {row_per_page: 100000})
+        if(res.status === 1){
+            onGetPublishingHouse(res.data)
+        }
+    }
+    useEffect(() => {
+        getAuthors();
+        getSalesAPI();
+        getPublishingHouseAPI();
+    }, []);
     return (
         <>
             <Layout>
@@ -49,3 +76,11 @@ export default function LayoutPage() {
     )
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onGetAuthors: (author) => dispatch(getAuthor(author)),
+        onGetSales: (sales) => dispatch(getSales(sales)),
+        onGetPublishingHouse: (publishing_house) => dispatch(getPublishingHouse(publishing_house))
+    }
+}
+export default connect(null, mapDispatchToProps)(LayoutPage);

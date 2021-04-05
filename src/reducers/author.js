@@ -1,4 +1,3 @@
-
 import {
     GET_AUTHORS
 }
