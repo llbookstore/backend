@@ -4,6 +4,7 @@ import Layout from './components/Layout/index'
 import Login from './components/Login'
 import { connect } from 'react-redux'
 import { API_HOST } from './constants/config'
+import { isAuth } from './utils/common'
 function App(props) {
   const { user } = props;
   axios.defaults.baseURL = API_HOST;
@@ -12,11 +13,13 @@ function App(props) {
   return (
     <div className="App">
       {
-        user.account_id ?
+        user.token && isAuth(user.token) ?
           <Layout />
           : <Login />
       }
-      {/* <Layout /> */}
+      {
+        console.log(isAuth(user.token))
+      }
     </div>
   );
 }

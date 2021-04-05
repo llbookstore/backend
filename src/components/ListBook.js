@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { useHistory, Link, useLocation } from 'react-router-dom'
+import {
+    useHistory,
+    Link,
+    // useLocation 
+} from 'react-router-dom'
 import {
     Button,
     Table,
@@ -21,6 +25,7 @@ import { EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
 import axios from 'axios'
 import { getCurrentTimestamp, timestampToDate, momentObjectToDateString } from '../utils/common'
 import { API_HOST, RPP, DATE_FORMAT } from '../constants/config'
+import { callApi, getImageURL } from '../utils/callApi'
 const { Option } = Select;
 
 const allStatus = [
@@ -28,16 +33,15 @@ const allStatus = [
     { id: 0, value: 'Đã xóa' },
     { id: 1, value: 'Hoạt động' },
 ];
-function useQuery() {
-    return new URLSearchParams(useLocation().search);
-}
+// function useQuery() {
+//     return new URLSearchParams(useLocation().search);
+// }
 const ListBook = (props) => {
     const history = useHistory();
-    const query = useQuery();   // do it later
+    // const query = useQuery();   // do it later
     const params = new URLSearchParams();
     const [data, setData] = useState([]);
     const [total, setTotal] = useState(0);
-    const [rowPerPage, setRowPerPage] = useState(RPP);
     const [currentPage, setCurrentPage] = useState(1);
     const [startTime, setStartTime] = useState();
     const [statusFinding, setStatusFinding] = useState(-1);
@@ -179,33 +183,35 @@ const ListBook = (props) => {
             )
         },
     ]
-   
+
     useEffect(() => {
         handleSearch();
+        // eslint-disable-next-line
     }, [updateCount])
+
     async function handleSearch(page = 1, pageSize = RPP) {
         setCurrentPage(page);
         const dataParams = {
-            row_per_page: rowPerPage,
+            row_per_page: pageSize,
             current_page: page || currentPage || 1,
             q: keyword
         };
         if (statusFinding > -1) dataParams.active = statusFinding;
         if (startTime) dataParams.start_time = momentObjectToDateString(startTime, 'MM-DD-YYYY');
         if (endTime) dataParams.end_time = momentObjectToDateString(endTime, 'MM-DD-YYYY');
-        const result = await axios.get('/books', { params: dataParams });
-        if (result && result.data.status === 1) {
-            const data = result.data.data.rows;
+        const res = await callApi('books', 'GET', dataParams);
+        if (res.status === 1) {
+            const data = res.data.rows;
             setData(data);
-            setTotal(result.data.data.count);
+            setTotal(res.data.count);
         }
     }
 
     const handleSearchSubmit = (values) => {
         params.append('q', keyword);
-        if (statusFinding !== -1) params.append('active',statusFinding);
-        if (!!startTime) params.append('start_time',`${momentObjectToDateString(startTime, 'DD-MM-YYYY')}`)
-        if (!!endTime) params.append('start_time',`${momentObjectToDateString(endTime, 'DD-MM-YYYY')}`)
+        if (statusFinding !== -1) params.append('active', statusFinding);
+        if (!!startTime) params.append('start_time', `${momentObjectToDateString(startTime, 'DD-MM-YYYY')}`)
+        if (!!endTime) params.append('start_time', `${momentObjectToDateString(endTime, 'DD-MM-YYYY')}`)
         history.push({ search: params.toString() });
         setUpdateCount(pre => pre + 1);
         setCurrentPage(1);
@@ -268,10 +274,8 @@ const ListBook = (props) => {
             <Pagination
                 showQuickJumper
                 showSizeChanger
-                onShowSizeChange={(current, pageSize) => { setRowPerPage(pageSize); setCurrentPage(1); }}
                 onChange={(page, pageSize) => handleSearch(page, pageSize)}
                 total={total}
-                pageSize={rowPerPage}
                 pageSizeOptions={['10', '20', '50']}
                 current={currentPage}
             />
@@ -286,10 +290,8 @@ const ListBook = (props) => {
             <Pagination
                 showQuickJumper
                 showSizeChanger
-                onShowSizeChange={(current, pageSize) => { setRowPerPage(pageSize); setCurrentPage(1); }}
                 onChange={(page, pageSize) => handleSearch(page, pageSize)}
                 total={total}
-                pageSize={rowPerPage}
                 pageSizeOptions={['10', '20', '50']}
                 current={currentPage}
             />
