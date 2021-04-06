@@ -9,34 +9,41 @@ import './Layout.scss'
 import HeaderComponent from './Header'
 import SiderComponent from './Sider'
 import routes from '../../routes'
-import { getAuthor, getPublishingHouse, getSales } from '../../actions/index'
+import { getAuthor, getPublishingHouse, getSales, getCategories } from '../../actions/index'
 import { callApi } from '../../utils/callApi';
 const { Content, Footer } = Layout;
 
 const LayoutPage = (props) => {
-    const { onGetAuthors, onGetPublishingHouse, onGetSales } = props;
+    const { onGetAuthors, onGetPublishingHouse, onGetSales, onGetCategories } = props;
     const getAuthors = async () => {
-        const res = await callApi('author', 'GET', { row_per_page: 100000 })
-        if(res.status === 1){
+        const res = await callApi('author', 'GET', { row_per_page: 100000 });
+        if(res && res.status === 1){
             onGetAuthors(res.data.rows)
         }
     }
     const getSalesAPI = async () => {
-        const res = await callApi('sale', 'GET')
-        if(res.status === 1){
+        const res = await callApi('sale', 'GET');
+        if(res && res.status === 1){
             onGetSales(res.data)
         }
     }
     const getPublishingHouseAPI = async () => {
-        const res = await callApi('publishing_house', 'GET', {row_per_page: 100000})
-        if(res.status === 1){
+        const res = await callApi('publishing_house', 'GET', {row_per_page: 100000});
+        if(res && res.status === 1){
             onGetPublishingHouse(res.data)
+        }
+    }
+    const getCategoriesAPI = async () => {
+        const res = await callApi('category', 'GET');
+        if(res && res.status === 1){
+            onGetCategories(res.data)
         }
     }
     useEffect(() => {
         getAuthors();
         getSalesAPI();
         getPublishingHouseAPI();
+        getCategoriesAPI();
     }, []);
     return (
         <>
@@ -80,7 +87,8 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onGetAuthors: (author) => dispatch(getAuthor(author)),
         onGetSales: (sales) => dispatch(getSales(sales)),
-        onGetPublishingHouse: (publishing_house) => dispatch(getPublishingHouse(publishing_house))
+        onGetPublishingHouse: (publishing_house) => dispatch(getPublishingHouse(publishing_house)),
+        onGetCategories: (category) => dispatch(getCategories(category)),
     }
 }
 export default connect(null, mapDispatchToProps)(LayoutPage);

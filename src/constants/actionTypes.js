@@ -7,6 +7,7 @@ export const GET_ALL_ACCOUNT = "GET_ALL_ACCOUNT"
 export const GET_AUTHORS = "GET_AUTHORS"
 //sale
 export const GET_SALES = "GET_SALES"
-//publishing_hoouse
+//publishing_house
 export const GET_PUBLISHING_HOUSES = "GET_PUBLISHING_HOUSES"
-
+//categories 
+export const GET_CATEGORIES = "GET_CATEGORIES"

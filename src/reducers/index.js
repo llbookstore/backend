@@ -5,14 +5,15 @@ import user from './user';
 import author from './author'
 import sale from './sale'
 import publishing_house from './publishing_house'
+import category from './category'
 const persistConfig = {
     key: 'root',
     storage,
-    whitelist: ['user', 'author', 'sale', 'publishing_house']
+    whitelist: ['user', 'author', 'sale', 'publishing_house','category']
 }
 
 const rootReducer = combineReducers({
-    user, author, sale, publishing_house
-})
+    user, author, sale, publishing_house, category
+})  
 
 export default persistReducer(persistConfig, rootReducer);

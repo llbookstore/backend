@@ -200,7 +200,7 @@ const ListBook = (props) => {
         if (startTime) dataParams.start_time = momentObjectToDateString(startTime, 'MM-DD-YYYY');
         if (endTime) dataParams.end_time = momentObjectToDateString(endTime, 'MM-DD-YYYY');
         const res = await callApi('books', 'GET', dataParams);
-        if (res.status === 1) {
+        if (res && res.status === 1) {
             const data = res.data.rows;
             setData(data);
             setTotal(res.data.count);
