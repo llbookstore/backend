@@ -1,20 +1,25 @@
 import React, { useState } from 'react'
+import { connect } from 'react-redux'
 import {
     Form,
     Input,
     Button,
-    AutoComplete,
-    Radio,
-    Checkbox,
+    TreeSelect,
+    Select,
+    Tag,
     DatePicker,
     Upload,
     message,
     Row,
-    Col
+    Col,
+    InputNumber,
+    Space
 } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 import { useHistory } from 'react-router-dom'
 import { callApi, getImageURL } from '../utils/callApi'
+import { timestampToDate } from '../utils/common'
+import { LANGUAGES, BOOK_FORMATS } from '../constants/config'
 const formItemLayout = {
     labelCol: {
         xs: {
@@ -45,36 +50,41 @@ const tailFormItemLayout = {
         },
     },
 };
-
+const { Option } = Select;
+const { SHOW_PARENT } = TreeSelect;
 const { TextArea } = Input;
-export default function AddBook() {
+const AddBook = (props) => {
+    const { author, sale, publishing_house, category } = props;
     const [form] = Form.useForm();
-    const [coverImgFile, setCoverImgFile] = useState();
+    const [coverImgFile, setCoverImgFile] = useState(null);
     const history = useHistory();
+    const categoryTree = () => {
+        return category.filter(item =>
+            item.group_id === -1
+        ).map((i) => {
+            const newItem = { title: i.name, value: i.category_id, key: i.category_id };
+            const filterChildren = category
+                .filter(item => item.group_id === i.category_id)
+                .map((item, index) => {
+                    const itemChildren = {
+                        title: item.name,
+                        value: item.category_id,
+                        key: item.category_id
+                    }
+                    return itemChildren;
+                });
+            newItem.children = filterChildren;
+            return newItem;
+        })
+    }
+    const onError = async (values) => {
+        console.log(values);
+    }
     const onFinish = async (values) => {
+        console.log(values);
         try {
-            const fakeData = {
-                name: '12341251',
-                author_id: 7,
-                description: 'asga',
-                pages: 123,
-                dimension: 'agas',
-                weight: 330,
-                publisher: 'sg',
-                // published_date: '10/10/2020',
-                publishing_id: 2,
-                coverImgFile,
-                // format,
-                // book_translator,
-                // quantity,
-                price: 3333,
-                // sale_id,
-                // status,
-                // language
-            }
-            // const a = new FormData();
-            const res = callApi('book', 'POST', fakeData, { headers: { 'Content-Type': 'multipart/form-data' } })
-            console.log(res);
+            // const res = callApi('book', 'POST', fakeData, { headers: { 'Content-Type': 'multipart/form-data' } })
+            // console.log(res);
         } catch (err) {
             console.log(err);
             message.error('Rất tiếc. Hiện tại không thể thêm sách.')
@@ -105,11 +115,11 @@ export default function AddBook() {
                 // message.success(`${info.file.name} file được tải lên thành công`);
                 break;
             case "removed":
-                setCoverImgFile('');
+                setCoverImgFile(null);
                 break;
             default:
                 // error or removed
-                setCoverImgFile('');
+                setCoverImgFile(null);
         }
     }
 
@@ -119,6 +129,11 @@ export default function AddBook() {
             form={form}
             name="addbook"
             onFinish={onFinish}
+            onError={onError}
+            initialValues={{
+                language: [LANGUAGES[0]],
+                format: BOOK_FORMATS[0]
+            }}
             scrollToFirstError
         >
             <Row gutter={24}>
@@ -133,37 +148,36 @@ export default function AddBook() {
                                 whitespace: true,
                             }
                         ]}
+                        hasFeedback
                     >
-
                         <Input autoFocus />
                     </Form.Item>
                     <Form.Item
                         name="description"
-                        label={
-                            <span>
-                                Mô tả chi tiết:
-                    </span>
-                        }
+                        label="Giới thiệu sách"
                         rules={[
                             {
                                 required: true,
-                                message: 'Vui lòng nhập mô tả chi tiết!',
+                                message: 'Vui lòng nhập giới thiệu sách!',
                                 whitespace: true,
                             }
                         ]}
+                        hasFeedback
                     >
                         <TextArea />
                     </Form.Item>
                     <Form.Item
-                        name="cover_image"
                         label="Ảnh bìa"
+                        name="cover_img"
                         rules={[
                             {
-                                required: true,
-                                message: 'Vui lòng chọn ảnh bìa!',
+                               validator: () => {
+                                    if(!coverImgFile) return Promise.reject('Ảnh bìa không được để trống');
+                                    else 
+                                    return Promise.resolve();
+                               }
                             }
                         ]}
-                        hasFeedback
                     >
                         <Upload
                             name="cover_img"
@@ -195,230 +209,315 @@ export default function AddBook() {
                                 message: 'Vui lòng chọn tác giả!',
                             },
                         ]}
+                        hasFeedback
                     >
-                    
-                        <Input />
-                    </Form.Item>
-                    {/*
-                    <Form.Item
-                        name="phone"
-                        label="Số điện thoại"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Vui lòng nhập số điện thoại!',
-                            },
-                            {
-                                pattern: /((09|03|07|08|05)+([0-9]{8})\b)/g,
-                                message: 'Số điện thoại không hợp lệ!'
+                        <Select
+                            showSearch
+                            optionFilterProp="children"
+                            filterOption={(input, option) =>
+                                option.children[0].toLowerCase().indexOf(input.toLowerCase()) >= 0
                             }
-                        ]}
-                    >
-                        <Input
-                            style={{
-                                width: '100%',
-                            }}
-                        />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="gender"
-                        label="Giới tính"
-                        rules={[
+                        >
                             {
-                                required: true,
-                                message: 'Vui lòng chọn giới tính!',
+                                author.map(item =>
+                                    <Option key={item.author_id} value={item.author_id}>
+                                        <Space>
+                                            {item.name}
+                                            {!item.active && <Tag color='error' style={{ fontWeight: 600 }}>Inactive</Tag>}
+                                        </Space>
+                                    </Option>)
                             }
-                        ]}
-                    >
-                        <Radio.Group>
-                            <Radio value="0">Nam</Radio>
-                            <Radio value="1">Nữ</Radio>
-                        </Radio.Group>
-
+                        </Select>
                     </Form.Item>
 
                     <Form.Item
-                        name="birth_date"
-                        label="Ngày sinh"
+                        name="publisher"
+                        label='Nhà xuất bản'
                         rules={[
                             {
                                 required: true,
-                                message: 'Vui lòng nhập số ngày sinh!'
-                            },
-                        ]}
-                    >
-                        <DatePicker format="DD/MM/YYYY" />
-                    </Form.Item>
-                    <Form.Item
-                        name="agreement"
-                        valuePropName="checked"
-                        rules={[
-                            {
-                                validator: (_, value) =>
-                                    value ? Promise.resolve() : Promise.reject('B'),
-                            },
-                        ]}
-                        {...tailFormItemLayout}
-                    >
-                        <Checkbox>
-                            Tôi đã đọc và đồng ý với <a href="">điều khoản</a>
-                        </Checkbox>
-                    </Form.Item>
-                    <Form.Item {...tailFormItemLayout}>
-                        <Button type="primary" htmlType="submit">
-                            Thêm
-                </Button>
-                    </Form.Item>
-                </Col>
-                <Col lg={12}>
-                    <Form.Item
-                        name="name"
-                        label='Tên sách'
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Vui lòng nhập tên tài khoản!',
+                                message: 'Vui lòng nhập tên nhà xuất bản',
                                 whitespace: true,
-                            },
-                            {
-                                min: 6,
-                                max: 20,
-                                message: 'tên tài khoản phải lớn hơn 6 ký tự và nhỏ hơn 20 ký tự'
-                            }
-                        ]}
-                    >
-
-                        <Input autoFocus />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="fullname"
-                        label={
-                            <span>
-                                Họ và tên
-                </span>
-                        }
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Vui lòng nhập họ và tên!',
-                                whitespace: true,
-                            }
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        name="password"
-                        label="Mật khẩu"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Vui lòng nhập mật khẩu!',
-                            },
-                            {
-                                min: 6,
-                                max: 50,
-                                message: 'Mật khẩu từ 6-50 ký tự.'
                             }
                         ]}
                         hasFeedback
                     >
-                        <Input.Password />
+                        <Input />
                     </Form.Item>
-
-
-
                     <Form.Item
-                        name="email"
-                        label="E-mail"
+                        name="published_date"
+                        label='Ngày xuất bản'
                         rules={[
                             {
-                                type: 'email',
-                                message: 'Email không hợp lệ!',
-                            },
+                                required: true,
+                                message: 'Vui lòng nhập ngày xuất bản',
+                            }
+                        ]}
+                        hasFeedback
+                    >
+                        <DatePicker format='DD/MM/YYYY' placeholder='DD/MM/YYYY' />
+                    </Form.Item>
+                    <Form.Item
+                        name="publishing_house"
+                        label="Nhà phát hành"
+                        rules={[
                             {
                                 required: true,
-                                message: 'Vui lòng nhập E-mail!',
+                                message: 'Vui lòng chọn Nhà phát hành!',
                             },
                         ]}
+                        hasFeedback
+                    >
+                        <Select
+                            showSearch
+                            optionFilterProp="children"
+                            filterOption={(input, option) =>
+                                option.children.props.children[0].toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            }
+                        >
+                            {
+                                publishing_house.map(item =>
+                                    <Option key={item.publishing_id} value={item.publishing_id}>
+                                        <Space>
+                                            {item.name}
+                                            {!item.active && <Tag color='error' style={{ fontWeight: 600 }}>Inactive</Tag>}
+                                        </Space>
+                                    </Option>)
+                            }
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        name='categories'
+                        label='Loại sách'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng chọn loại sách!',
+                            },
+                        ]}
+                        hasFeedback
+                    >
+                        <TreeSelect
+                            treeData={categoryTree()}
+                            showSearch
+                            allowClear
+                            multiple
+                            // dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                            filterTreeNode={(input, cate) => cate.title.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                            // treeCheckable={true}
+                            // showCheckedStrategy={SHOW_PARENT}
+                            placeholder='Please select'
+                        />
+                    </Form.Item>
+                </Col>
+                <Col lg={12} >
+                    <Form.Item
+                        name='translator'
+                        label='Người dịch'
                     >
                         <Input />
-                    </Form.Item> */}
+                    </Form.Item>
+                    <Form.Item
+                        name="price"
+                        label='Giá bìa'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập giá bìa',
+                            }
+                        ]}
+                        hasFeedback
+                    >
+                        <InputNumber
+                            min={0}
+                            style={{ width: '100%' }}
+                            formatter={value => `${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`}
+                            parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        name="sale"
+                        label="Khuyến mại"
+                    >
+                        <Select
+                            showSearch
+                            allowClear={true}
+                            optionFilterProp="saleItem"
+                            filterOption={(input, option) => {
+                                return option.children[1].props.children[0].toString().indexOf(input) >= 0;
+                            }}
+                        >
+                            {
+                                sale.map(item =>
+                                    <Option key={item.sale_id} value={item.sale_id}>
+                                        Giảm:
+                                        <span style={{ color: 'green', fontWeight: 600 }}>
+                                            {item.percent}%
+                                        </span>
+                                        <Space>
+                                            <span style={{ color: 'tomato' }}>
+                                                [{timestampToDate(item.date_start)} - {timestampToDate(item.date_end)}]
+                                            </span>
+                                            {!item.active && <Tag color='error' style={{ fontWeight: 600 }}>Inactive</Tag>}
+                                        </Space>
+                                    </Option>)
+                            }
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        name='quantity'
+                        label='Số lượng'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập số lượng sách',
+                            }
+                        ]}
+                        hasFeedback
+                    >
+                        <InputNumber min={0} />
+                    </Form.Item>
+                    <Form.Item
+                        name='pages'
+                        label='Số trang sách'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập số trang sách',
+                            }
+                        ]}
+                        hasFeedback
+                    >
+                        <InputNumber min={0} />
+                    </Form.Item>
+                    <Form.Item
+                        name='dimension'
+                        label='Kích thước sách(cm)'
+                    >
+                        <Input.Group compact>
+                            <Form.Item
+                                name='dimensionX'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập chiều dài sách',
+                                    }
+                                ]}
+                                hasFeedback
+                                noStyle
+                            >
+                                <InputNumber style={{ width: 100, textAlign: 'center' }} placeholder="Chiều dài" min={0} />
+                            </Form.Item>
+                            <Input
+                                className="site-input-split"
+                                style={{
+                                    width: 30,
+                                    borderLeft: 0,
+                                    borderRight: 0,
+                                    pointerEvents: 'none',
+                                }}
+                                value='X'
+                                disabled
+                            />
+                            <Form.Item
+                                name='dimensionY'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập chiều rộng sách',
+                                    }
+                                ]}
+                                hasFeedback
+                                noStyle
+                            >
+                                <InputNumber
+                                    className="site-input-right"
+                                    style={{
+                                        width: 100,
+                                        textAlign: 'center',
+                                    }}
+                                    placeholder="Chiều rộng"
+                                    min={0}
+                                />
 
-                    {/* <Form.Item
-                    name="phone"
-                    label="Số điện thoại"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Vui lòng nhập số điện thoại!',
-                        },
-                        {
-                            pattern: /((09|03|07|08|05)+([0-9]{8})\b)/g,
-                            message: 'Số điện thoại không hợp lệ!'
-                        }
-                    ]}
-                >
-                    <Input
-                        style={{
-                            width: '100%',
-                        }}
-                    />
-                </Form.Item> */}
-                    {/* 
-                <Form.Item
-                    name="gender"
-                    label="Giới tính"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Vui lòng chọn giới tính!',
-                        }
-                    ]}
-                >
-                    <Radio.Group>
-                        <Radio value="0">Nam</Radio>
-                        <Radio value="1">Nữ</Radio>
-                    </Radio.Group>
+                            </Form.Item>
+                        </Input.Group>
+                    </Form.Item>
+                    <Form.Item
+                        name='weight'
+                        label='Khối lượng sách(gam)'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng nhập khối lượng sách',
+                            }
+                        ]}
+                        hasFeedback
+                    >
+                        <InputNumber min={0} />
+                    </Form.Item>
 
-                </Form.Item>
+                    <Form.Item
+                        name='language'
+                        label='Ngôn ngữ'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng chọn ngôn ngữ sách',
+                            }
+                        ]}
+                        hasFeedback
+                    >
+                        <Select
+                            showSearch
+                            mode='multiple'
+                            allowClear={true}
+                        >
+                            {
+                                LANGUAGES.map((item, index) =>
+                                    <Option key={index} value={item}>
+                                        {item}
+                                    </Option>)
+                            }
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        name='format'
+                        label='Định dạng'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Vui lòng chọn định dạng sách',
+                            }
+                        ]}
+                        hasFeedback
 
-                <Form.Item
-                    name="birth_date"
-                    label="Ngày sinh"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Vui lòng nhập số ngày sinh!'
-                        },
-                    ]}
-                >
-                    <DatePicker format="DD/MM/YYYY" />
-                </Form.Item>
-                <Form.Item
-                    name="agreement"
-                    valuePropName="checked"
-                    rules={[
-                        {
-                            validator: (_, value) =>
-                                value ? Promise.resolve() : Promise.reject('B'),
-                        },
-                    ]}
-                    {...tailFormItemLayout}
-                >
-                    <Checkbox>
-                        Tôi đã đọc và đồng ý với
-                        </Checkbox> 
-                </Form.Item>*/}
-                    <Form.Item {...tailFormItemLayout}>
-                        <Button type="primary" htmlType="submit">
-                            Thêm
-                </Button>
+                    >
+                        <Select
+                            showSearch
+                            allowClear={true}
+                        >
+                            {
+                                BOOK_FORMATS.map((item, index) =>
+                                    <Option key={index} value={item}>
+                                        {item}
+                                    </Option>)
+                            }
+                        </Select>
                     </Form.Item>
                 </Col>
             </Row>
+            <Form.Item {...tailFormItemLayout}>
+                <Button type="primary" htmlType="submit">
+                    Thêm
+                </Button>
+            </Form.Item>
         </Form >
     )
 }
+
+const mapStateToProps = ({ author, sale, publishing_house, category }) => {
+    return { author, sale, publishing_house, category }
+}
+
+export default connect(mapStateToProps)(AddBook);
