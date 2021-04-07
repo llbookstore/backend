@@ -24,7 +24,7 @@ import {
 import { EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
 import axios from 'axios'
 import { getCurrentTimestamp, timestampToDate, momentObjectToDateString } from '../utils/common'
-import { API_HOST, RPP, DATE_FORMAT } from '../constants/config'
+import { RPP, DATE_FORMAT } from '../constants/config'
 import { callApi, getImageURL } from '../utils/callApi'
 const { Option } = Select;
 
@@ -36,7 +36,7 @@ const allStatus = [
 // function useQuery() {
 //     return new URLSearchParams(useLocation().search);
 // }
-const ListBook = (props) => {
+const ListBook = () => {
     const history = useHistory();
     // const query = useQuery();   // do it later
     const params = new URLSearchParams();
@@ -136,7 +136,7 @@ const ListBook = (props) => {
             align: 'left',
             width: '10%',
             render: (record, index) => (
-                <img alt={record.name} width={60} src={`${API_HOST}/images/${record.cover_image}`} />
+                <img alt={record.name} width={60} src={getImageURL(record.cover_image)} />
             )
         },
         {
@@ -207,7 +207,7 @@ const ListBook = (props) => {
         }
     }
 
-    const handleSearchSubmit = (values) => {
+    const handleSearchSubmit = () => {
         params.append('q', keyword);
         if (statusFinding !== -1) params.append('active', statusFinding);
         if (!!startTime) params.append('start_time', `${momentObjectToDateString(startTime, 'DD-MM-YYYY')}`)
@@ -217,12 +217,12 @@ const ListBook = (props) => {
         setCurrentPage(1);
     }
 
-    const preventEnterSubmit = (e) => {
-        if (e.keyCode === 13) {
-            e.preventDefault();
-            return false;
-        }
-    }
+    // const preventEnterSubmit = (e) => {
+    //     if (e.keyCode === 13) {
+    //         e.preventDefault();
+    //         return false;
+    //     }
+    // }
 
     return (
         <div>
@@ -235,7 +235,6 @@ const ListBook = (props) => {
             <Card style={{ margin: '20px 0' }}>
                 <Form
                     onFinish={handleSearchSubmit}
-                    onKeyDown={preventEnterSubmit}
                     className="ant-advanced-search-form"
                     initialValues={{ status: -1 }}
                 >

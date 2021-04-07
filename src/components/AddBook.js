@@ -13,12 +13,13 @@ import {
     Row,
     Col,
     InputNumber,
-    Space
+    Space,
+    Switch
 } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { callApi, getImageURL } from '../utils/callApi'
-import { timestampToDate, momentObjectToDateString } from '../utils/common'
+import { timestampToDate, momentObjectToDateString, timestampToMomentObject } from '../utils/common'
 import { LANGUAGES, BOOK_FORMATS } from '../constants/config'
 const formItemLayout = {
     labelCol: {
@@ -54,9 +55,67 @@ const { Option } = Select;
 const { TextArea } = Input;
 const AddBook = (props) => {
     const { author, sale, publishing_house, category } = props;
+    const { bookIdUpdate } = useParams();
     const [form] = Form.useForm();
     const [coverImgFile, setCoverImgFile] = useState(null);
     const history = useHistory();
+    useEffect(() => {
+        if (bookIdUpdate) {
+            const getBookUpdate = async () => {
+                const res = await callApi(`book/${bookIdUpdate}`, 'GET');
+                if (res && res.status === 1) {
+                    const {
+                        name,
+                        dimension,
+                        cover_image,
+                        format,
+                        language,
+                        weight,
+                        pages,
+                        quantity,
+                        sale_id,
+                        price,
+                        book_translator,
+                        category_details,
+                        publishing_id,
+                        published_date,
+                        publisher,
+                        author_id,
+                        description,
+                    } = res.data;
+                    const dimensionArr = dimension.split(' ');
+                    const languageArr = language.split(',');
+                    const categoryArr = category_details.map(item => item.category_id);
+                    const momentPublishedDate = timestampToMomentObject(published_date);
+                    setCoverImgFile(cover_image);
+                    form.setFieldsValue({
+                        name,
+                        description,
+                        format,
+                        dimensionX: dimensionArr[0],
+                        dimensionY: dimensionArr[2],
+                        language: languageArr,
+                        weight,
+                        pages,
+                        quantity,
+                        sale_id,
+                        price,
+                        book_translator,
+                        publishing_id,
+                        published_date: momentPublishedDate,
+                        publisher,
+                        author_id,
+                        categories: categoryArr 
+                    })
+
+                }
+                else {
+                    message.error('Hệ thống đang gặp sự cố, bạn hãy thử lại sau.')
+                }
+            }
+            getBookUpdate();
+        }
+    }, [bookIdUpdate, form])
     const categoryTree = () => {
         return category.filter(item =>
             item.group_id === -1
@@ -86,47 +145,57 @@ const AddBook = (props) => {
             dimensionX,
             pages,
             quantity,
-            sale,
+            sale_id,
             price,
-            translator,
+            book_translator,
             categories,
-            publishing_house,
+            publishing_id,
             published_date,
             publisher,
-            author,
+            author_id,
             description,
         } = values;
         const dimension = `${dimensionX} x ${dimensionY} cm`;
         const data = {
             image_file_name: coverImgFile,
             name,
-            author_id: author,
+            author_id,
             description,
             pages,
             dimension,
             weight,
             publisher,
             published_date: momentObjectToDateString(published_date, 'MM-DD-YYYY'),
-            publishing_id: publishing_house,
+            publishing_id,
             format,
-            book_translator: translator,
+            book_translator,
             quantity,
             price,
-            sale_id: sale,
-            language,
+            sale_id,
+            language: language.join(','),
         }
         try {
-            const res = await callApi('book', 'POST', data);
-            if (res && res.status === 1) {
-                const { book_id } = res.data;
-                const resAddBookCate = await callApi(`book/${book_id}/categories`, 'POST', { category: categories });
-                if (resAddBookCate && resAddBookCate.status === 1) {
-                    message.success('Đã thêm sách thành công!');
-                    form.resetFields();
+            if (!bookIdUpdate) {
+                const res = await callApi('book', 'POST', data);
+                if (res && res.status === 1) {
+                    const { book_id } = res.data;
+                    const resAddBookCate = await callApi(`book/${book_id}/categories`, 'POST', { category: categories });
+                    if (resAddBookCate && resAddBookCate.status === 1) {
+                        message.success('Đã thêm sách thành công!');
+                        form.resetFields();
+                    }
                 }
-
             }
-            console.log(res);
+            else {
+                const res = await callApi(`book/${bookIdUpdate}`, 'PUT', data);
+                if (res && res.status === 1) {
+                    const resAddBookCate = await callApi(`book/${bookIdUpdate}/categories`, 'POST', { category: categories });
+                    if (resAddBookCate && resAddBookCate.status === 1) {
+                        message.success('Đã cập nhật sách thành công!');
+                        history.push('/book');
+                    }
+                }
+            }
         } catch (err) {
             console.log(err);
             message.error('Rất tiếc. Hiện tại không thể thêm sách.')
@@ -206,40 +275,45 @@ const AddBook = (props) => {
                     </Form.Item>
                     <Form.Item
                         label="Ảnh bìa"
-                        name="cover_img"
-                        rules={[
-                            {
-                                validator: () => {
-                                    if (!coverImgFile) return Promise.reject('Ảnh bìa không được để trống');
-                                    else
-                                        return Promise.resolve();
-                                }
-                            }
-                        ]}
                     >
-                        <Upload
-                            name="cover_img"
-                            listType="picture-card"
-                            className="avatar-uploader"
-                            onChange={onCoverImageChange}
-                            maxCount={1}
-                            customRequest={customRequest}
-                            onPreview={onImagePreview}
-                            progress={{
-                                strokeColor: {
-                                    '0%': '#108ee9',
-                                    '100%': '#87d068',
-                                },
-                                strokeWidth: 3,
-                                format: percent => `${parseFloat(percent.toFixed(2))}%`,
-                            }}
-                        >
-                            <UploadOutlined />
-                            Upload
-                        </Upload>
+                        <div style={{ display: 'flex', flexDirection: 'row' }}>
+                            <Form.Item
+                                noStyle
+                                name="cover_img"
+                                rules={[
+                                    {
+                                        validator: () => {
+                                            if (!coverImgFile) return Promise.reject('Ảnh bìa không được để trống');
+                                            else
+                                                return Promise.resolve();
+                                        }
+                                    }
+                                ]}
+                            >
+                                <Upload
+                                    listType="picture-card"
+                                    className="avatar-uploader"
+                                    onChange={onCoverImageChange}
+                                    maxCount={1}
+                                    customRequest={customRequest}
+                                    progress={{
+                                        strokeColor: {
+                                            '0%': '#108ee9',
+                                            '100%': '#87d068',
+                                        },
+                                        strokeWidth: 3,
+                                        format: percent => `${parseFloat(percent.toFixed(2))}%`,
+                                    }}
+                                >
+                                    <UploadOutlined />
+                                    Upload
+                                </Upload>
+                            </Form.Item>
+                            {coverImgFile && <img src={getImageURL(coverImgFile)} alt="avatar" width={100} height='auto' style={{ float: 'left' }} />}
+                        </div>
                     </Form.Item>
                     <Form.Item
-                        name="author"
+                        name="author_id"
                         label="Tác giả"
                         rules={[
                             {
@@ -296,7 +370,7 @@ const AddBook = (props) => {
                         <DatePicker format='DD/MM/YYYY' placeholder='DD/MM/YYYY' />
                     </Form.Item>
                     <Form.Item
-                        name="publishing_house"
+                        name="publishing_id"
                         label="Nhà phát hành"
                         rules={[
                             {
@@ -350,7 +424,7 @@ const AddBook = (props) => {
                 </Col>
                 <Col lg={12} >
                     <Form.Item
-                        name='translator'
+                        name='book_translator'
                         label='Người dịch'
                     >
                         <Input />
@@ -374,7 +448,7 @@ const AddBook = (props) => {
                         />
                     </Form.Item>
                     <Form.Item
-                        name="sale"
+                        name="sale_id"
                         label="Khuyến mại"
                     >
                         <Select
@@ -394,7 +468,7 @@ const AddBook = (props) => {
                                         </span>
                                         <Space>
                                             <span style={{ color: 'tomato' }}>
-                                                [{timestampToDate(item.date_start)} - {timestampToDate(item.date_end)}]
+                                                [{timestampToDate(item.date_start)}-{timestampToDate(item.date_end)}]
                                             </span>
                                             {!item.active && <Tag color='error' style={{ fontWeight: 600 }}>Inactive</Tag>}
                                         </Space>
@@ -546,8 +620,8 @@ const AddBook = (props) => {
                 </Col>
             </Row>
             <Form.Item {...tailFormItemLayout}>
-                <Button type="primary" htmlType="submit">
-                    Thêm
+                <Button type="primary" htmlType="submit" size="large">
+                    {!bookIdUpdate ? 'Thêm' : 'Cập nhật'}
                 </Button>
             </Form.Item>
         </Form >

@@ -27,6 +27,14 @@ const router = [
         key: 3,
         parent: 1,
         isMenu: false,
+    },
+    {
+        path: '/book/edit/:bookIdUpdate',
+        exact: true,
+        component: AddBook,
+        key: 4,
+        parent: 1,
+        isMenu: false,
     }
 ]
 

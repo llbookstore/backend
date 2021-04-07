@@ -22,7 +22,6 @@ export async function callApi(endpoint, method = 'GET', body, config) {
             ...dataQuery,
             ...config,
         })
-        console.log(response);
         return response.data
     } catch (err) {
         console.log('err api', err);

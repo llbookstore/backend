@@ -13,6 +13,9 @@ export const momentObjectToTimestamp = (momentObject) => {
     return momentObject.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).unix();
 }
 
+export const timestampToMomentObject = (time) => {
+    return moment(time*1000)
+}
 export const getCurrentTimestamp = () => {
     return Math.ceil(new Date().getTime() / 1000);
 }
