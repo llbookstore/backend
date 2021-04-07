@@ -20,8 +20,9 @@ export async function callApi(endpoint, method = 'GET', body, config) {
             url: `${endpoint}`,
             baseURL: API_HOST,
             ...dataQuery,
-            ...config
+            ...config,
         })
+        console.log(response);
         return response.data
     } catch (err) {
         console.log('err api', err);

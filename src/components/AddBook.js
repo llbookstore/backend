@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import {
     Form,
@@ -18,7 +18,7 @@ import {
 import { UploadOutlined } from '@ant-design/icons'
 import { useHistory } from 'react-router-dom'
 import { callApi, getImageURL } from '../utils/callApi'
-import { timestampToDate } from '../utils/common'
+import { timestampToDate, momentObjectToDateString } from '../utils/common'
 import { LANGUAGES, BOOK_FORMATS } from '../constants/config'
 const formItemLayout = {
     labelCol: {
@@ -51,7 +51,6 @@ const tailFormItemLayout = {
     },
 };
 const { Option } = Select;
-const { SHOW_PARENT } = TreeSelect;
 const { TextArea } = Input;
 const AddBook = (props) => {
     const { author, sale, publishing_house, category } = props;
@@ -65,7 +64,7 @@ const AddBook = (props) => {
             const newItem = { title: i.name, value: i.category_id, key: i.category_id };
             const filterChildren = category
                 .filter(item => item.group_id === i.category_id)
-                .map((item, index) => {
+                .map((item) => {
                     const itemChildren = {
                         title: item.name,
                         value: item.category_id,
@@ -77,14 +76,57 @@ const AddBook = (props) => {
             return newItem;
         })
     }
-    const onError = async (values) => {
-        console.log(values);
-    }
     const onFinish = async (values) => {
-        console.log(values);
+        const {
+            name,
+            format,
+            language,
+            weight,
+            dimensionY,
+            dimensionX,
+            pages,
+            quantity,
+            sale,
+            price,
+            translator,
+            categories,
+            publishing_house,
+            published_date,
+            publisher,
+            author,
+            description,
+        } = values;
+        const dimension = `${dimensionX} x ${dimensionY} cm`;
+        const data = {
+            image_file_name: coverImgFile,
+            name,
+            author_id: author,
+            description,
+            pages,
+            dimension,
+            weight,
+            publisher,
+            published_date: momentObjectToDateString(published_date, 'MM-DD-YYYY'),
+            publishing_id: publishing_house,
+            format,
+            book_translator: translator,
+            quantity,
+            price,
+            sale_id: sale,
+            language,
+        }
         try {
-            // const res = callApi('book', 'POST', fakeData, { headers: { 'Content-Type': 'multipart/form-data' } })
-            // console.log(res);
+            const res = await callApi('book', 'POST', data);
+            if (res && res.status === 1) {
+                const { book_id } = res.data;
+                const resAddBookCate = await callApi(`book/${book_id}/categories`, 'POST', { category: categories });
+                if (resAddBookCate && resAddBookCate.status === 1) {
+                    message.success('Đã thêm sách thành công!');
+                    form.resetFields();
+                }
+
+            }
+            console.log(res);
         } catch (err) {
             console.log(err);
             message.error('Rất tiếc. Hiện tại không thể thêm sách.')
@@ -129,11 +171,7 @@ const AddBook = (props) => {
             form={form}
             name="addbook"
             onFinish={onFinish}
-            onError={onError}
-            initialValues={{
-                language: [LANGUAGES[0]],
-                format: BOOK_FORMATS[0]
-            }}
+            initialValues={{ language: [LANGUAGES[0]], format: BOOK_FORMATS[0] }}
             scrollToFirstError
         >
             <Row gutter={24}>
@@ -171,11 +209,11 @@ const AddBook = (props) => {
                         name="cover_img"
                         rules={[
                             {
-                               validator: () => {
-                                    if(!coverImgFile) return Promise.reject('Ảnh bìa không được để trống');
-                                    else 
-                                    return Promise.resolve();
-                               }
+                                validator: () => {
+                                    if (!coverImgFile) return Promise.reject('Ảnh bìa không được để trống');
+                                    else
+                                        return Promise.resolve();
+                                }
                             }
                         ]}
                     >
