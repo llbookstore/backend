@@ -1,6 +1,8 @@
 import ListBook from './components/ListBook';
 import AddBook from './components/AddBook';
-import { AppstoreOutlined, ReadOutlined } from '@ant-design/icons'
+import ListUser from './components/ListUser'
+import AddUser from './components/AddUser'
+import { AppstoreOutlined, ReadOutlined, UserOutlined,UnorderedListOutlined  } from '@ant-design/icons'
 const router = [
     //book
     {
@@ -35,7 +37,40 @@ const router = [
         key: 4,
         parent: 1,
         isMenu: false,
-    }
+    },
+    {
+        path: 'nopath',
+        key: 10,
+        parent: -1,
+        icon: <UserOutlined />,
+        title: 'Users',
+    },
+    {
+        path: '/account',
+        exact: true,
+        key: 11,
+        parent: 10,
+        component: ListUser,
+        icon: <UnorderedListOutlined />,
+        title: 'Quản lý tài khoản',
+        isMenu: true,
+    },
+    {
+        path: '/account/add',
+        exact: true,
+        component: AddUser,
+        key: 12,
+        parent: 10,
+        isMenu: false,
+    },
+    {
+        path: '/account/:accIdUpdate',
+        exact: true,
+        component: AddUser,
+        key: 13,
+        parent: 10,
+        isMenu: false,
+    },
 ]
 
 export default router;
