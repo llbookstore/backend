@@ -11,7 +11,7 @@ import {
 } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
 import { callApi } from '../utils/callApi'
-import { LANGUAGES, BOOK_FORMATS, PATTERN } from '../constants/config'
+import { PATTERN } from '../constants/config'
 import UnFindPage from './UnFindPage'
 const formItemLayout = {
     labelCol: {
@@ -156,7 +156,6 @@ const AddUser = () => {
                             form={form}
                             name="AddUser"
                             onFinish={onFinish}
-                            initialValues={{ language: [LANGUAGES[0]], format: BOOK_FORMATS[0] }}
                             scrollToFirstError
                             style={{ width: '80%' }}
                         >
@@ -167,7 +166,7 @@ const AddUser = () => {
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Vui lòng nhập tên tài khoán!',
+                                        message: 'Vui lòng nhập tên tài khoản!',
                                         whitespace: true,
                                     },
                                     {
