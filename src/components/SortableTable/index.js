@@ -23,11 +23,10 @@ const SortableTable = ({ dataSource, setDataSource, columns, ...rest }) => {
         });
         return col;
     }
-   
+
     const onSortEnd = ({ oldIndex, newIndex }) => {
         if (oldIndex !== newIndex) {
             const newData = arrayMove([].concat(dataSource), oldIndex, newIndex).filter(el => !!el);
-            console.log('Sorted items: ', newData);
             setDataSource(newData)
         }
     };
