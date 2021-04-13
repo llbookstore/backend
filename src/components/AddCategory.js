@@ -9,7 +9,8 @@ import {
     Col,
     Select,
     message,
-    InputNumber
+    InputNumber,
+    Card
 } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
 import { callApi } from '../utils/callApi'
@@ -66,11 +67,18 @@ const AddCategory = ({ category }) => {
             value: 'Không có',
             active: 1
         });
+        if (catIdUpdate) {
+            const findCategory = category.find(item => `${item.category_id}` === catIdUpdate);
+            if (findCategory.group_id === -1) {
+                const findIndex = listCate.findIndex(item => `${item.key}` === `${catIdUpdate}`);
+                listCate.splice(findIndex, 1);
+            }
+        }
         return listCate;
     }
     useEffect(() => {
         if (catIdUpdate) {
-            const getBookUpdate = async () => {
+            const getCategoryUpdate = async () => {
                 const res = await callApi(`category/${catIdUpdate}`, 'GET');
                 if (res && res.status === 1) {
                     const {
@@ -89,7 +97,7 @@ const AddCategory = ({ category }) => {
                     setValidPage(false);
                 }
             }
-            getBookUpdate();
+            getCategoryUpdate();
         }
     }, [catIdUpdate, form])
     const onFinish = async (values) => {
@@ -142,13 +150,13 @@ const AddCategory = ({ category }) => {
         <>
             {
                 !validPage ? <UnFindPage /> :
-                    <>
+                    <Card>
                         <Form
                             {...formItemLayout}
                             form={form}
                             name="AddCategory"
                             onFinish={onFinish}
-                            initialValues={{ quantity: 0, group_id: -1}}
+                            initialValues={{ quantity: 0, group_id: -1 }}
                             scrollToFirstError
                             style={{ width: '80%' }}
                         >
@@ -202,7 +210,7 @@ const AddCategory = ({ category }) => {
                                 </Row>
                             </Form.Item>
                         </Form >
-                    </>
+                    </Card>
             }</>
     )
 }

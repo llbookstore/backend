@@ -55,7 +55,7 @@ const AddUser = () => {
     const history = useHistory();
     useEffect(() => {
         if (accIdUpdate) {
-            const getBookUpdate = async () => {
+            const getUserUpdate = async () => {
                 const res = await callApi(`account/${accIdUpdate}`, 'GET');
                 if (res && res.status === 1) {
                     const {
@@ -78,7 +78,7 @@ const AddUser = () => {
                     setValidPage(false);
                 }
             }
-            getBookUpdate();
+            getUserUpdate();
         }
     }, [accIdUpdate, form])
     const onFinish = async (values) => {
