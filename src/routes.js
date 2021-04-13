@@ -4,6 +4,7 @@ import ListUser from './components/ListUser'
 import AddUser from './components/AddUser'
 import ListCategory from './components/ListCategory'
 import AddCategory from './components/AddCategory'
+import OrderingCategory from './components/OrderingCategory'
 import SortableTable from './components/SortableTable/index'
 
 import {
@@ -72,6 +73,14 @@ const router = [
         exact: true,
         component: AddCategory,
         key: 12,
+        parent: 10,
+        isMenu: false,
+    },
+    {
+        path: '/category/arrange',
+        exact: true,
+        component: OrderingCategory,
+        key: 13,
         parent: 10,
         isMenu: false,
     },
