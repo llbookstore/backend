@@ -14,7 +14,6 @@ import {
     Popconfirm
 } from 'antd';
 import { EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
-import axios from 'axios'
 import { callApi } from '../utils/callApi'
 import { getCategories } from '../actions/index'
 import './ListCategory.scss'
@@ -80,7 +79,7 @@ const ListCategory = ({ category, onGetCategories }) => {
             render: record => {
                 const onDeleteCategory = async (category_id) => {
                     try {
-                        await axios.delete(`/category/${category_id}`);
+                        await callApi(`/category/${category_id}`, 'DELETE');
                         setUpdateCount(pre => pre + 1);
                         message.success('Xóa danh mục sách thành công!');
                     } catch (err) {
@@ -90,7 +89,7 @@ const ListCategory = ({ category, onGetCategories }) => {
                 }
                 const onRestoreCategory = async (category_id) => {
                     try {
-                        await axios.put(`/category/${category_id}`, { active: 1 });
+                        await callApi(`/category/${category_id}`, 'PUT', { active: 1 });
                         setUpdateCount(pre => pre + 1);
                         message.success('Khôi phục danh mục sách thành công!');
                     } catch (err) {

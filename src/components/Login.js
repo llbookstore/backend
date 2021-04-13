@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Form, Input, Button, message } from 'antd'
-import axios from 'axios'
+import { callApi } from '../utils/callApi'
 import jwt from 'jsonwebtoken'
 import * as actions from '../actions/index'
 const layout = {
@@ -27,8 +27,8 @@ const Login = (props) => {
         const { username, password } = values;
         const dataLogin = { username, password };
         try {
-            const res = await axios.post(`/login`, dataLogin);
-            const { status, data } = res.data;
+            const res = await callApi('login', 'POST', dataLogin);
+            const { status, data } = res;
             if (status === 0) message.error('Tên tài khoản hoặc mật khẩu không chính xác.');
             if (data.token) {
                 //get user data
@@ -37,8 +37,8 @@ const Login = (props) => {
                     message.warn('Đăng nhập không thành công!')
                 }
                 else{
-                    const res = await axios.get(`/account/${userId}`);
-                    const userData = res.data.data;
+                    const res = await callApi(`/account/${userId}`, 'GET');
+                    const userData = res.data;
                     userData.token = data.token;
                     onGetUser(userData);
                     message.success('Đăng nhập thành công!');

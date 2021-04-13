@@ -21,7 +21,6 @@ import {
     Popconfirm
 } from 'antd';
 import { EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
-import axios from 'axios'
 import { momentObjectToDateString } from '../utils/common'
 import { RPP, DATE_FORMAT } from '../constants/config'
 import { callApi } from '../utils/callApi'
@@ -71,7 +70,7 @@ const ListUser = () => {
             render: record => {
                 const onDeleteAccount = async (account_id) => {
                     try {
-                        await axios.put(`/account/${account_id}`, { active: 0 });
+                        await callApi(`/account/${account_id}`, 'PUT', { active: 0 });
                         setUpdateCount(pre => pre + 1);
                         message.success('Xóa tài khoản thành công!');
                     } catch (err) {
@@ -81,7 +80,7 @@ const ListUser = () => {
                 }
                 const onRestoreAccount = async (account_id) => {
                     try {
-                        await axios.put(`/account/${account_id}`, { active: 1 });
+                        await callApi(`/account/${account_id}`, 'PUT', { active: 1 });
                         setUpdateCount(pre => pre + 1);
                         message.success('Khôi phục tài khoản thành công!');
                     } catch (err) {

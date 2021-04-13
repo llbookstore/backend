@@ -22,7 +22,6 @@ import {
     Popconfirm
 } from 'antd';
 import { EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
-import axios from 'axios'
 import { getCurrentTimestamp, timestampToDate, momentObjectToDateString } from '../utils/common'
 import { RPP, DATE_FORMAT } from '../constants/config'
 import { callApi, getImageURL } from '../utils/callApi'
@@ -70,7 +69,7 @@ const ListBook = () => {
             render: record => {
                 const onDeleteBook = async (book_id) => {
                     try {
-                        await axios.put(`/book/${book_id}`, { active: 0 });
+                        await callApi(`/book/${book_id}`, 'PUT', { active: 0 });
                         setUpdateCount(pre => pre + 1);
                         message.success('Xóa sách thành công!');
                     } catch (err) {
@@ -80,7 +79,7 @@ const ListBook = () => {
                 }
                 const onRestoreBook = async (book_id) => {
                     try {
-                        await axios.put(`/book/${book_id}`, { active: 1 });
+                        await callApi(`/book/${book_id}`, 'PUT', { active: 1 });
                         setUpdateCount(pre => pre + 1);
                         message.success('Khôi phục sách thành công!');
                     } catch (err) {
