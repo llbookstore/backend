@@ -9,7 +9,6 @@ const initialState = {};
 const userReducer = (state = initialState, action) => {
     switch (action.type) {
         case GET_USER_INFO: 
-            console.log('hihihih',action.user);
             return {...action.user}
         
         case LOG_OUT:

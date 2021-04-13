@@ -30,7 +30,7 @@ const LayoutPage = (props) => {
     const getPublishingHouseAPI = async () => {
         const res = await callApi('publishing_house', 'GET', {row_per_page: 100000});
         if(res && res.status === 1){
-            onGetPublishingHouse(res.data)
+            onGetPublishingHouse(res.data.rows)
         }
     }
     const getCategoriesAPI = async () => {

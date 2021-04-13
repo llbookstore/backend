@@ -5,13 +5,16 @@ import AddUser from './components/AddUser'
 import ListCategory from './components/ListCategory'
 import AddCategory from './components/AddCategory'
 import OrderingCategory from './components/OrderingCategory'
-import SortableTable from './components/SortableTable/index'
+import ListPublishingHouse from './components/ListPublishingHouse'
+import AddPublishingHouse from './components/AddPublishingHouse'
 
 import {
     AppstoreOutlined,
     ReadOutlined,
     UserOutlined,
     UnorderedListOutlined,
+    ApartmentOutlined,
+    BankOutlined
 
 } from '@ant-design/icons'
 const router = [
@@ -57,7 +60,7 @@ const router = [
         key: 10,
         parent: 1,
         isMenu: true,
-        icon: <ReadOutlined />,
+        icon: <ApartmentOutlined />,
         title: 'Quản lý danh mục sách'
     },
     {
@@ -82,6 +85,32 @@ const router = [
         component: OrderingCategory,
         key: 13,
         parent: 10,
+        isMenu: false,
+    },//publishing-house
+    {
+        path: '/publishing-house',
+        exact: true,
+        component: ListPublishingHouse,
+        key: 20,
+        parent: 1,
+        isMenu: true,
+        icon: <BankOutlined />,
+        title: 'Quản lý nhà phát hành'
+    },
+    {
+        path: '/publishing-house/add',
+        exact: true,
+        component: AddPublishingHouse,
+        key: 21,
+        parent: 20,
+        isMenu: false,
+    },
+    {
+        path: '/publishing-house/edit/:pubIdUpdate',
+        exact: true,
+        component: AddPublishingHouse,
+        key: 22,
+        parent: 20,
         isMenu: false,
     },
     //users
@@ -117,10 +146,6 @@ const router = [
         key: 53,
         parent: 10,
         isMenu: false,
-    },
-    {
-        path: '/test',
-        component: SortableTable
     }
 ]
 
