@@ -43,28 +43,28 @@ const tailFormItemLayout = {
     },
 };
 
-const AddPublishingHouse = () => {
-    const { pubIdUpdate } = useParams();
+const AddAuthor = () => {
+    const { authorIdUpdate } = useParams();
     const [form] = Form.useForm();
     const [validPage, setValidPage] = useState(true);
-    const [logoPublishing, setLogoPublishing] = useState(null);
+    const [avatarAuthor, setAvatarAuthor] = useState(null);
     const history = useHistory();
 
     useEffect(() => {
-        if (pubIdUpdate) {
+        if (authorIdUpdate) {
             const getCategoryUpdate = async () => {
-                const res = await callApi(`publishing_house/${pubIdUpdate}`, 'GET');
+                const res = await callApi(`author/${authorIdUpdate}`, 'GET');
                 if (res && res.status === 1 && res.data) {
                     const {
                         name,
                         description,
-                        image
+                        avatar
                     } = res.data;
                     form.setFieldsValue({
                         name,
                         description
                     })
-                    setLogoPublishing(image);
+                    setAvatarAuthor(avatar);
                 }
                 else {
                     setValidPage(false);
@@ -75,7 +75,7 @@ const AddPublishingHouse = () => {
         return () => {
             setValidPage(true);
         }
-    }, [pubIdUpdate, form])
+    }, [authorIdUpdate, form])
     const onFinish = async (values) => {
         const {
             name,
@@ -85,14 +85,14 @@ const AddPublishingHouse = () => {
             name,
             description
         }
-        if (logoPublishing) data.logo_file_name = logoPublishing;
-        if (!pubIdUpdate) {
+        if (avatarAuthor) data.avatar_file_name = avatarAuthor;
+        if (!authorIdUpdate) {
             try {
-                const res = await callApi('publishing_house', 'POST', data);
+                const res = await callApi('author', 'POST', data);
                 if (res && res.status === 1) {
-                    message.success('Đã thêm mới nhà phát hành thành công!');
+                    message.success('Đã thêm mới tác giả thành công!');
                     form.resetFields();
-                    setLogoPublishing(null);
+                    setAvatarAuthor(null);
                 } else {
                     if (res && res.code === '410')
                         message.warn(`${res.msg}`);
@@ -106,17 +106,17 @@ const AddPublishingHouse = () => {
         }
         else {
             try {
-                const res = await callApi(`publishing_house/${pubIdUpdate}`, 'PUT', data);
+                const res = await callApi(`author/${authorIdUpdate}`, 'PUT', data);
                 if (res && res.status === 1) {
-                    message.success('Đã cập nhật nhà phát hành thành công!');
-                    history.push('/publishing-house');
+                    message.success('Đã cập nhật tác giả thành công!');
+                    history.push('/author');
                 } else {
                     if (res && res.code === '410')
                         message.warn(`${res.msg}`);
                 }
             } catch (err) {
                 console.log(err);
-                message.error('Rất tiếc. Hiện tại không thể cập nhật nhà phát hành.')
+                message.error('Rất tiếc. Hiện tại không thể cập nhật tác giả.')
             }
         }
     }
@@ -126,7 +126,7 @@ const AddPublishingHouse = () => {
             formData.append('image', file);
             const res = await callApi('upload', 'POST', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
             if (res) {
-                setLogoPublishing(res);
+                setAvatarAuthor(res);
                 onSuccess('ok');
             }
         } catch (err) {
@@ -134,7 +134,7 @@ const AddPublishingHouse = () => {
         }
     };
 
-    const onHandleLogoPublishingChange = (info) => {
+    const onHandleavatarAuthorChange = (info) => {
         switch (info.file.status) {
             case "uploading":
                 break;
@@ -142,11 +142,11 @@ const AddPublishingHouse = () => {
                 // message.success(`${info.file.name} file được tải lên thành công`);
                 break;
             case "removed":
-                setLogoPublishing(null);
+                setAvatarAuthor(null);
                 break;
             default:
                 // error or removed
-                setLogoPublishing(null);
+                setAvatarAuthor(null);
         }
     }
     return (
@@ -158,24 +158,25 @@ const AddPublishingHouse = () => {
                             <Form
                                 {...formItemLayout}
                                 form={form}
-                                name="AddPublishingHouse"
+                                name="AddAuthor"
                                 onFinish={onFinish}
+                                initialValues={{ quantity: 0, group_id: -1 }}
                                 scrollToFirstError
                                 style={{ width: '80%' }}
                             >
 
                                 <Form.Item
                                     name="name"
-                                    label='Tên nhà phát hành'
+                                    label='Tên tác giả'
                                     rules={[
                                         {
                                             required: true,
-                                            message: 'Vui lòng nhập tên nhà phát hành!',
+                                            message: 'Vui lòng nhập tên tác giả!',
                                             whitespace: true,
                                         },
                                         {
                                             min: 4,
-                                            message: 'Tên nhà phát hành phải có ít nhất 4 ký tự'
+                                            message: 'Tên tác giả phải có ít nhất 4 ký tự'
                                         }
                                     ]}
                                     hasFeedback
@@ -184,19 +185,19 @@ const AddPublishingHouse = () => {
                                 </Form.Item>
                                 <Form.Item
                                     name="description"
-                                    label="Mô tả nhà phát hành"
+                                    label="Mô tả tác giả"
                                     hasFeedback
                                 >
                                     <Input.TextArea  rows={6}/>
                                 </Form.Item>
 
                                 <Form.Item
-                                    label='Logo nhà phát hành'
+                                    label='Avatar tác giả'
                                 >
                                     <Upload
                                         maxCount={1}
                                         customRequest={customRequest}
-                                        onChange={onHandleLogoPublishingChange}
+                                        onChange={onHandleavatarAuthorChange}
                                     >
                                         <Button
                                             icon={<UploadOutlined />}
@@ -206,9 +207,9 @@ const AddPublishingHouse = () => {
                                     </Button>
                                     </Upload>
                                     {
-                                        logoPublishing &&
+                                        avatarAuthor &&
                                         <Image
-                                            src={getImageURL(logoPublishing)}
+                                            src={getImageURL(avatarAuthor)}
                                             alt=''
                                             width={160}
                                         />
@@ -216,7 +217,7 @@ const AddPublishingHouse = () => {
                                 </Form.Item>
                                 <Form.Item {...tailFormItemLayout}>
                                     <Button type="primary" htmlType="submit" size="large">
-                                        {!pubIdUpdate ? 'Thêm mới nhà phát hành' : 'Cập nhật nhà phát hành'}
+                                        {!authorIdUpdate ? 'Thêm mới tác giả' : 'Cập nhật tác giả'}
                                     </Button>
                                 </Form.Item>
                             </Form >
@@ -227,4 +228,4 @@ const AddPublishingHouse = () => {
     )
 }
 
-export default AddPublishingHouse
+export default AddAuthor

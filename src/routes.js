@@ -7,6 +7,8 @@ import AddCategory from './components/AddCategory'
 import OrderingCategory from './components/OrderingCategory'
 import ListPublishingHouse from './components/ListPublishingHouse'
 import AddPublishingHouse from './components/AddPublishingHouse'
+import ListAuthor from './components/ListAuthor'
+import AddAuthor from './components/AddAuthor'
 
 import {
     AppstoreOutlined,
@@ -14,7 +16,8 @@ import {
     UserOutlined,
     UnorderedListOutlined,
     ApartmentOutlined,
-    BankOutlined
+    BankOutlined,
+    SolutionOutlined 
 
 } from '@ant-design/icons'
 const router = [
@@ -111,6 +114,32 @@ const router = [
         component: AddPublishingHouse,
         key: 22,
         parent: 20,
+        isMenu: false,
+    },//author
+    {
+        path: '/author',
+        exact: true,
+        component: ListAuthor,
+        key: 30,
+        parent: 1,
+        isMenu: true,
+        icon: <SolutionOutlined />,
+        title: 'Quản lý tác giả'
+    },
+    {
+        path: '/author/add',
+        exact: true,
+        component: AddAuthor,
+        key: 31,
+        parent: 30,
+        isMenu: false,
+    },
+    {
+        path: '/author/edit/:authorIdUpdate',
+        exact: true,
+        component: AddAuthor,
+        key: 32,
+        parent: 30,
         isMenu: false,
     },
     //users

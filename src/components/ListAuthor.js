@@ -21,7 +21,6 @@ import {
     Image
 } from 'antd';
 import { EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
-import { timestampToDate } from '../utils/common'
 import { callApi, getImageURL } from '../utils/callApi'
 const { Option } = Select;
 
@@ -33,7 +32,7 @@ const allStatus = [
 // function useQuery() {
 //     return new URLSearchParams(useLocation().search);
 // }
-const ListPublishingHouse = () => {
+const ListAuthor = () => {
     const history = useHistory();
     // const query = useQuery();   // do it later
     const [form] = Form.useForm();
@@ -51,7 +50,7 @@ const ListPublishingHouse = () => {
                 <p>
                     {index + 1}
                     <br />
-                    <strong>ID: {record.publishing_id}</strong>
+                    <strong>ID: {record.author_id}</strong>
                 </p>
             )
         },
@@ -60,21 +59,21 @@ const ListPublishingHouse = () => {
             key: 'action',
             align: 'center',
             render: record => {
-                const onDeletePublishingHouse = async (publishing_id) => {
+                const onDeleteAuthor = async (author_id) => {
                     try {
-                        await callApi(`/publishing_house/${publishing_id}`, 'DELETE');
+                        await callApi(`/author/${author_id}`, 'DELETE');
                         setUpdateCount(pre => pre + 1);
-                        message.success('Xóa nhà phát hành thành công!');
+                        message.success('Xóa tác giả thành công!');
                     } catch (err) {
                         console.log(err);
                         message.error('Có lỗi xảy ra. Hiện tại không thể xóa.')
                     }
                 }
-                const onRestorePublishingHouse = async (publishing_id) => {
+                const onRestoreAuthor = async (author_id) => {
                     try {
-                        await callApi(`/publishing_house/${publishing_id}/restore`, 'PUT');
+                        await callApi(`/author/${author_id}/restore`, 'PUT');
                         setUpdateCount(pre => pre + 1);
-                        message.success('Khôi phục nhà phát hành thành công!');
+                        message.success('Khôi phục tác giả thành công!');
                     } catch (err) {
                         console.log(err);
                         message.error('Có lỗi xảy ra. Hiện tại không thể khôi phục.')
@@ -82,8 +81,8 @@ const ListPublishingHouse = () => {
                 }
                 return (
                     <>
-                        <Popover content='Cập nhật nhà phát hành'>
-                            <Link to={`/publishing-house/edit/${record.publishing_id}`}>
+                        <Popover content='Cập nhật tác giả'>
+                            <Link to={`/author/edit/${record.author_id}`}>
                                 <EditOutlined
                                     style={{ cursor: 'pointer', padding: 5, color: 'blue' }}
                                 />
@@ -91,10 +90,10 @@ const ListPublishingHouse = () => {
                     </Popover>
                         {
                             record.active === 1 ?
-                                <Popover content='Xóa nhà phát hành ?'>
+                                <Popover content='Xóa tác giả ?'>
                                     <Popconfirm
-                                        title="Bạn có chắc xóa nhà phát hành này chứ?"
-                                        onConfirm={() => onDeletePublishingHouse(record.publishing_id)}
+                                        title="Bạn có chắc xóa tác giả này chứ?"
+                                        onConfirm={() => onDeleteAuthor(record.author_id)}
                                         okText='Đồng ý'
                                         cancelText='Không'
                                     >
@@ -104,8 +103,8 @@ const ListPublishingHouse = () => {
                                 :
                                 <Popover content='Khôi phục xóa'>
                                     <Popconfirm
-                                        title="Bạn có chắc khôi phục lại nhà phát hành này chứ"
-                                        onConfirm={() => onRestorePublishingHouse(record.publishing_id)}
+                                        title="Bạn có chắc khôi phục lại tác giả này chứ"
+                                        onConfirm={() => onRestoreAuthor(record.author_id)}
                                         okText='Đồng ý'
                                         cancelText='Không'
                                     >
@@ -126,9 +125,9 @@ const ListPublishingHouse = () => {
             }
         },
         {
-            title: 'Logo',
-            key: 'logo',
-            dataIndex: 'image',
+            title: 'Avatar',
+            key: 'avatar',
+            dataIndex: 'avatar',
             align: 'center',
             render: (text, record) => (
                 <Image 
@@ -140,7 +139,7 @@ const ListPublishingHouse = () => {
             )
         },
         {
-            title: 'Tên nhà phát hành',
+            title: 'Tên tác giả',
             key: 'name',
             dataIndex: 'name',
             align: 'center',
@@ -160,14 +159,14 @@ const ListPublishingHouse = () => {
                         <>
                             <span style={{ color: 'yellowgreen' }}>
                             </span>{`${record.created_by} | 
-                            ${timestampToDate(record.created_at)}`} <br />
+                            ${record.created_at}`} <br />
                         </>
                     }
                     {
                         record.updated_at && <>
                             <strong style={{ color: 'blueviolet' }}>
                                 Sửa: </strong> {record.updated_by} |
-                            {timestampToDate(record.updated_at)}
+                            {record.updated_at}
                         </>
                     }
                 </>
@@ -192,7 +191,7 @@ const ListPublishingHouse = () => {
         };
         if (query) dataParams.q = query;
         if (status > -1) dataParams.active = status;
-        const res = await callApi('publishing_house', 'GET', dataParams);
+        const res = await callApi('author', 'GET', dataParams);
         if (res && res.status === 1) {
             const data = res.data.rows;
             setData(data);
@@ -225,7 +224,7 @@ const ListPublishingHouse = () => {
                             <Form.Item label='Từ khóa' name='query'>
                                 <Input
                                     style={{ width: '100%', marginRight: '20px', marginLeft: '10px' }}
-                                    placeholder='tên nhà phát hành, ID'
+                                    placeholder='tên tác giả, ID'
                                     autoFocus={true}
                                 />
                             </Form.Item>
@@ -239,20 +238,20 @@ const ListPublishingHouse = () => {
                         </Col>
                     </Row>
                     <Button type='primary' htmlType="submit">Tìm kiếm</Button>
-                    <Button type='primary' onClick={() => history.push('/publishing-house/add')}
+                    <Button type='primary' onClick={() => history.push('/author/add')}
                         style={{ backgroundColor: 'green',borderColor: 'green', marginLeft: '1em' }}
                     >
-                        Thêm mới nhà phát hành</Button>
+                        Thêm mới tác giả</Button>
                 </Form>
             </Card>
-            Tìm thấy <strong>{total}</strong> nhà phát hành
+            Tìm thấy <strong>{total}</strong> tác giả
             <Pagination
                 onChange={(page) => handleSearch(page)}
                 total={total}
                 current={currentPage}
             />
             <Table
-                rowKey={record => record.publishing_id}
+                rowKey={record => record.author_id}
                 bordered={true}
                 columns={columns}
                 dataSource={data}
@@ -268,4 +267,4 @@ const ListPublishingHouse = () => {
     )
 }
 
-export default ListPublishingHouse;
+export default ListAuthor;
