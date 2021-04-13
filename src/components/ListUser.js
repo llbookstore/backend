@@ -280,7 +280,7 @@ const ListUser = () => {
                     </Row>
                     <Button type='primary' htmlType="submit">Tìm kiếm</Button>
                     <Button type='primary' onClick={() => history.push('/account/add')}
-                        style={{ backgroundColor: 'green', margin: '1em' }}
+                        style={{ backgroundColor: 'green', marginLeft: '1em' }}
                     >
                         Tạo tài khoản</Button>
                 </Form>

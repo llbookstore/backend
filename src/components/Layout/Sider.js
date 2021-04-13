@@ -7,7 +7,7 @@ const { SubMenu } = Menu;
 export default function SiderComponent() {
     const history = useHistory();
     return (
-        <Sider width={200} >
+        <Sider width={240} >
             <Menu
                 mode="inline"
                 defaultSelectedKeys={['1']}

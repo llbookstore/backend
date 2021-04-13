@@ -34,9 +34,9 @@ const LayoutPage = (props) => {
         }
     }
     const getCategoriesAPI = async () => {
-        const res = await callApi('category', 'GET');
+        const res = await callApi('category', 'GET', {row_per_page: 1000000});
         if(res && res.status === 1){
-            onGetCategories(res.data)
+            onGetCategories(res.data.rows)
         }
     }
     useEffect(() => {
@@ -44,6 +44,7 @@ const LayoutPage = (props) => {
         getSalesAPI();
         getPublishingHouseAPI();
         getCategoriesAPI();
+        // eslint-disable-next-line
     }, []);
     return (
         <>

@@ -2,7 +2,17 @@ import ListBook from './components/ListBook';
 import AddBook from './components/AddBook';
 import ListUser from './components/ListUser'
 import AddUser from './components/AddUser'
-import { AppstoreOutlined, ReadOutlined, UserOutlined,UnorderedListOutlined  } from '@ant-design/icons'
+import ListCategory from './components/ListCategory'
+import AddCategory from './components/AddCategory'
+import SortableTable from './components/SortableTable/index'
+
+import {
+    AppstoreOutlined,
+    ReadOutlined,
+    UserOutlined,
+    UnorderedListOutlined,
+
+} from '@ant-design/icons'
 const router = [
     //book
     {
@@ -38,9 +48,37 @@ const router = [
         parent: 1,
         isMenu: false,
     },
+    //category
+    {
+        path: '/category',
+        exact: true,
+        component: ListCategory,
+        key: 10,
+        parent: 1,
+        isMenu: true,
+        icon: <ReadOutlined />,
+        title: 'Quản lý danh mục sách'
+    },
+    {
+        path: '/category/add',
+        exact: true,
+        component: AddCategory,
+        key: 11,
+        parent: 10,
+        isMenu: false,
+    },
+    {
+        path: '/category/edit/:catIdUpdate',
+        exact: true,
+        component: AddCategory,
+        key: 12,
+        parent: 10,
+        isMenu: false,
+    },
+    //users
     {
         path: 'nopath',
-        key: 10,
+        key: 50,
         parent: -1,
         icon: <UserOutlined />,
         title: 'Users',
@@ -48,8 +86,8 @@ const router = [
     {
         path: '/account',
         exact: true,
-        key: 11,
-        parent: 10,
+        key: 51,
+        parent: 50,
         component: ListUser,
         icon: <UnorderedListOutlined />,
         title: 'Quản lý tài khoản',
@@ -59,18 +97,22 @@ const router = [
         path: '/account/add',
         exact: true,
         component: AddUser,
-        key: 12,
-        parent: 10,
+        key: 52,
+        parent: 50,
         isMenu: false,
     },
     {
         path: '/account/:accIdUpdate',
         exact: true,
         component: AddUser,
-        key: 13,
+        key: 53,
         parent: 10,
         isMenu: false,
     },
+    {
+        path: '/test',
+        component: SortableTable
+    }
 ]
 
 export default router;

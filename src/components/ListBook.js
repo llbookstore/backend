@@ -265,7 +265,7 @@ const ListBook = () => {
                     <Button
                         type='primary'
                         onClick={() => history.push('/book/add')}
-                        style={{ backgroundColor: 'green', display: 'inline-block', margin: '1em' }}
+                        style={{ backgroundColor: 'green', display: 'inline-block', marginLeft: '1em' }}
                     >Thêm sách</Button>
 
                 </Form>
