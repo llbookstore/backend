@@ -52,7 +52,7 @@ const AddPublishingHouse = () => {
 
     useEffect(() => {
         if (pubIdUpdate) {
-            const getCategoryUpdate = async () => {
+            const getPublishingUpdate = async () => {
                 const res = await callApi(`publishing_house/${pubIdUpdate}`, 'GET');
                 if (res && res.status === 1 && res.data) {
                     const {
@@ -70,7 +70,7 @@ const AddPublishingHouse = () => {
                     setValidPage(false);
                 }
             }
-            getCategoryUpdate();
+            getPublishingUpdate();
         }
         return () => {
             setValidPage(true);

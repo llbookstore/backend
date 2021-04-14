@@ -10,27 +10,25 @@ export default function SiderComponent() {
         <Sider width={240} >
             <Menu
                 mode="inline"
-                defaultSelectedKeys={['1']}
-                defaultOpenKeys={['sub1']}
+                // defaultSelectedKeys={['1','50']}
+                defaultOpenKeys={['1', '50']}
                 style={{ height: '100%', borderRight: 0 }}
             >
                 {
                     routes
                         .filter(item => item.parent === -1)
-                        .map(item =>
-                            <SubMenu key={item.key} icon={item.icon} title={item.title} >
-                                {
-                                    routes
-                                        .filter(i => i.parent === item.key && i.isMenu)
-                                        .map((sub, index) =>
-                                            <Menu.Item key={index} icon={sub.icon} onClick={() => history.push(sub.path)}>
-                                                {sub.title}
-                                            </Menu.Item>
-                                        )
-                                }
-                            </SubMenu>
+                        .map(item => <SubMenu key={item.key} icon={item.icon} title={item.title} >
+                            {
+                                routes
+                                    .filter(i => i.parent === item.key && i.isMenu)
+                                    .map((sub, index) =>
+                                        <Menu.Item key={index} icon={sub.icon} onClick={() => history.push(sub.path)}>
+                                            {sub.title}
+                                        </Menu.Item>
+                                    )
+                            }
+                        </SubMenu>
                         )
-
                 }
 
             </Menu>

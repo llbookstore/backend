@@ -52,7 +52,7 @@ const AddAuthor = () => {
 
     useEffect(() => {
         if (authorIdUpdate) {
-            const getCategoryUpdate = async () => {
+            const getAuthorUpdate = async () => {
                 const res = await callApi(`author/${authorIdUpdate}`, 'GET');
                 if (res && res.status === 1 && res.data) {
                     const {
@@ -70,7 +70,7 @@ const AddAuthor = () => {
                     setValidPage(false);
                 }
             }
-            getCategoryUpdate();
+            getAuthorUpdate();
         }
         return () => {
             setValidPage(true);

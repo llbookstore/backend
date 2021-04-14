@@ -22,9 +22,9 @@ const LayoutPage = (props) => {
         }
     }
     const getSalesAPI = async () => {
-        const res = await callApi('sale', 'GET');
+        const res = await callApi('sale', 'GET',{row_per_page: 100000});
         if(res && res.status === 1){
-            onGetSales(res.data)
+            onGetSales(res.data.rows)
         }
     }
     const getPublishingHouseAPI = async () => {

@@ -10,7 +10,7 @@ export const momentObjectToDateString = (momentObject, format = 'DD/MM/YYYY') =>
     return day.format(format);
 }
 export const momentObjectToTimestamp = (momentObject) => {
-    return momentObject.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).unix();
+    return momentObject.unix();
 }
 
 export const timestampToMomentObject = (time) => {

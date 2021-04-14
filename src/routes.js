@@ -9,6 +9,8 @@ import ListPublishingHouse from './components/ListPublishingHouse'
 import AddPublishingHouse from './components/AddPublishingHouse'
 import ListAuthor from './components/ListAuthor'
 import AddAuthor from './components/AddAuthor'
+import ListSale from './components/ListSale'
+import AddSale from './components/AddSale'
 
 import {
     AppstoreOutlined,
@@ -16,9 +18,9 @@ import {
     UserOutlined,
     UnorderedListOutlined,
     ApartmentOutlined,
-    BankOutlined,
-    SolutionOutlined 
-
+    HomeOutlined,
+    SolutionOutlined,
+    TagsOutlined 
 } from '@ant-design/icons'
 const router = [
     //book
@@ -97,7 +99,7 @@ const router = [
         key: 20,
         parent: 1,
         isMenu: true,
-        icon: <BankOutlined />,
+        icon: <HomeOutlined />,
         title: 'Quản lý nhà phát hành'
     },
     {
@@ -140,6 +142,32 @@ const router = [
         component: AddAuthor,
         key: 32,
         parent: 30,
+        isMenu: false,
+    },//sale
+    {
+        path: '/sale',
+        exact: true,
+        component: ListSale,
+        key: 40,
+        parent: 1,
+        isMenu: true,
+        icon: <TagsOutlined />,
+        title: 'Quản lý khuyến mại'
+    },
+    {
+        path: '/sale/add',
+        exact: true,
+        component: AddSale,
+        key: 41,
+        parent: 40,
+        isMenu: false,
+    },
+    {
+        path: '/sale/edit/:saleIdUpdate',
+        exact: true,
+        component: AddSale,
+        key: 42,
+        parent: 40,
         isMenu: false,
     },
     //users
