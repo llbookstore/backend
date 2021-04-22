@@ -14,24 +14,22 @@ import {
     Col,
     Input,
     DatePicker,
-    Statistic,
     Card,
     Tag,
 } from 'antd';
-import { timestampToDate, momentObjectToTimestamp } from '../utils/common'
-import { DATE_FORMAT, ORDER_STATUS } from '../constants/config'
+import { momentObjectToTimestamp } from '../utils/common'
+import { DATE_FORMAT, ADVISORY_STATUS } from '../constants/config'
 import { callApi } from '../utils/callApi'
 import ViewHandleHistory from './ViewHandleHistory'
 import HandleClientRequest from './HandleClientRequest'
-import BillDetails from './BillDetails'
 const { Option } = Select;
 
-const findStatusOrder = (status) => {
-    const order = ORDER_STATUS.find(item => item.status === status);
-    return order || { color: 'white', name: '' };
+const findStatusAdvisory = (status) => {
+    const advisory = ADVISORY_STATUS.find(item => item.status === status);
+    return advisory || { color: 'white', name: '' };
 }
 
-function BillManagement() {
+function AdvisoryManagement() {
     const history = useHistory();
     const [form] = Form.useForm();
     const [data, setData] = useState();
@@ -41,13 +39,10 @@ function BillManagement() {
     //handle history
     const [showHistory, setShowHistory] = useState(false);
     const [historyData, setHistoryData] = useState([]);
-    //handle a bill
     const [note, setNote] = useState('');
     const [status, setStatus] = useState();
-    const [currentBillId, setCurrentBillId] = useState();
-    const [showHandleBill, setShowHandleBill] = useState(false);
-    //bill detail
-    const [showBillDetail, setShowBillDetail] = useState(false);
+    const [currentAdvisoryId, setCurrentAdvisoryId] = useState();
+    const [showHandleAdvisory, setShowHandleAdvisory] = useState(false);
     const params = new URLSearchParams();
 
     useEffect(() => {
@@ -68,10 +63,10 @@ function BillManagement() {
             q: query
         };
         if (query) dataParams.q = query;
-        if (status > -2) dataParams.status = status;
-        if (startTime) dataParams.date_start = momentObjectToTimestamp(startTime);
-        if (endTime) dataParams.date_end = momentObjectToTimestamp(endTime);
-        const res = await callApi('bill', 'GET', dataParams);
+        if (status > -1) dataParams.status = status;
+        if (startTime) dataParams.time_start = momentObjectToTimestamp(startTime);
+        if (endTime) dataParams.time_end = momentObjectToTimestamp(endTime);
+        const res = await callApi('advisory', 'GET', dataParams);
         if (res && res.status === 1) {
             const data = res.data.rows;
             for (let item of data) {
@@ -93,20 +88,19 @@ function BillManagement() {
         setUpdateCount(pre => pre + 1);
         setCurrentPage(1);
     }
-    //handle bill
-    const handleClickHandleReq = (billId, status) => {
+    const handleClickHandleReq = (advisoryId, status) => {
         setNote('');
-        setCurrentBillId(billId);
+        setCurrentAdvisoryId(advisoryId);
         setStatus(status);
-        setShowHandleBill(true);
+        setShowHandleAdvisory(true);
     }
-    const handleSubmitBill = async () => {
+    const handleSubmitAdvisory = async () => {
         const dataHandle = {
             note,
             status
         }
         try {
-            const res = await callApi(`/bill/${currentBillId}`, 'PUT', dataHandle);
+            const res = await callApi(`/advisory/${currentAdvisoryId}`, 'PUT', dataHandle);
             if (res && res.status === 1) {
                 message.success('Xử lý thành công');
             }
@@ -115,109 +109,75 @@ function BillManagement() {
                 console.log(res);
             }
             setUpdateCount(pre => pre + 1);
-            setShowHandleBill(false);
+            setShowHandleAdvisory(false);
         } catch (error) {
             message.error('Hệ thống đang gặp sự cố. Bạn vui lòng thử lại sau!')
         }
     }
     const columns = [
         {
-            title: 'Mã đơn hàng',
-            key: 'bill_id',
+            title: 'STT',
+            key: 'stt',
             align: 'center',
-            dataIndex: 'bill_id',
-            render: text => (
-                <>
-                    <strong>#{text}</strong>
-                    <br />
-                    <span
-                        onClick={() => {
-                            setCurrentBillId(text);
-                            setShowBillDetail(true);
-                        }}
-                        style={{ color: 'blueviolet', cursor: 'pointer' }}
-                    >
-                        Xem chi tiết
-                    </span>
-                </>
+            width: '10%',
+            render: (text, record, index) => (
+                <p>{index + 1}</p>
             )
         },
         {
-            title: 'Thông tin người đặt hàng',
+            title: 'Thông tin KH',
             key: 'user_info',
             align: 'left',
-            width: '30%',
-            render: record => {
-                return (
-                    <>
-                        <b>Họ tên: </b>{record.user_name} <br />
-                        <b>Sđt: </b>{record.phone} <br />
-                        <b>Địa chỉ: </b>{record.address} <br />
-                        {record.user_note && <span><b>KH ghi chú: </b>{record.user_note}</span>}
-                    </>
-                )
-            }
-        },
-        {
-            title: 'Trạng thái',
-            key: 'status',
-            dataIndex: 'status',
-            align: 'center',
-            render: (text) => (
+            width: '34%',
+            render: (text, record, index) => (
                 <>
-                    <Tag color={findStatusOrder(text).color}>{findStatusOrder(text).name}</Tag>
+                    <p><b>Họ tên: </b>{record.username}</p>
+                    <p><b>Số điện thoại: </b>{record.phone}</p>
+                    {record.address && <p><b>Địa chỉ: </b>{record.address}</p>}
+                    <p>
+                        <b>Thời điểm yêu cầu: </b>
+                        {record.created_at}
+                    </p>
                 </>
             )
         },
         {
-            title: 'Tổng tiền',
-            key: 'total_price',
-            dataIndex: 'total_price',
+            title: 'Nội dung cần tư vấn',
+            key: 'user_note',
             align: 'center',
-            render: (text) => (
-                <>
-                    <Statistic value={text} valueStyle={{ fontSize: '14px' }} />
-                </>
+            dataIndex: 'user_note',
+            render: user_note => (
+                <p>{user_note}</p>
             )
         },
         {
-            title: 'Đặt hàng lúc',
-            key: 'order_time',
+            title: 'Xử lý',
+            key: 'handleReq',
             align: 'center',
-            render: record => (
+            width: '25%',
+            dataIndex: 'handle_history',
+            render: (handle_history, record, index) => (
                 <>
-                    {timestampToDate(record.created_at, 'DD/MM/YYYY hh:mm a')}
+                    <p>
+                        <b>Trạng thái: </b>
+                        <Tag color={findStatusAdvisory(record.status).color}>{findStatusAdvisory(record.status).name}</Tag>
+                    </p>
+                    <Button onClick={() => handleClickHandleReq(record.advisory_id, record.status)} style={{ marginRight: '20px', background: 'lightgreen' }}>
+                        Xử lý
+                    </Button>
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            setHistoryData(handle_history);
+                            setShowHistory(true);
+                        }}>
+                        Xem lịch sử
+                    </Button>
                 </>
             )
         },
-        {
-            title: 'Xử lý bởi',
-            key: 'handle_by',
-            align: 'center',
-            width: '22%',
-            render: record => (
-                <>
-                    <Row justify='space-between'>
-                        <Button
-                            onClick={() => handleClickHandleReq(record.bill_id, record.status)}
-                            style={{ marginRight: '20px', background: 'lightgreen' }}
-                        >
-                            Xử lý
-                        </Button>
-                        <Button
-                            type="primary"
-                            onClick={() => {
-                                setHistoryData(record.handle_history);
-                                setShowHistory(true);
-                            }}
-                        >
-                            Xem lịch sử
-                        </Button>
-                    </Row>
-                </>
-            )
-        },
-    ]
+
+    ];
     return (
         <>
             <HandleClientRequest
@@ -225,35 +185,30 @@ function BillManagement() {
                 setNote={setNote}
                 status={status}
                 setStatus={setStatus}
-                allStatus={ORDER_STATUS.filter(item => item.status !== -2)}
-                showHandleReq={showHandleBill}
-                setShowHandleReq={setShowHandleBill}
-                handleSubmitHandleReq={handleSubmitBill}
+                allStatus={ADVISORY_STATUS.filter(item => item.status !== -1)}
+                showHandleReq={showHandleAdvisory}
+                setShowHandleReq={setShowHandleAdvisory}
+                handleSubmitHandleReq={handleSubmitAdvisory}
             />
             <ViewHandleHistory
-                allStatus={ORDER_STATUS}
+                allStatus={ADVISORY_STATUS}
                 showHistory={showHistory}
                 setShowHistory={setShowHistory}
                 historyData={historyData}
-            />
-            <BillDetails
-                showBillDetail={showBillDetail}
-                setShowBillDetail={setShowBillDetail}
-                id={currentBillId}
             />
             <Card style={{ margin: '20px 0' }}>
                 <Form
                     form={form}
                     onFinish={handleSearchSubmit}
                     className="ant-advanced-search-form"
-                    initialValues={{ status: -2 }}
+                    initialValues={{ status: -1 }}
                 >
                     <Row gutter={24} >
                         <Col span={6}>
                             <Form.Item label='Từ khóa' name='query'>
                                 <Input
                                     style={{ width: '100%', marginRight: '20px', marginLeft: '10px' }}
-                                    placeholder='mã hóa đơn, tên KH, sđt khách hàng'
+                                    placeholder='tên KH, sđt khách hàng'
                                     autoFocus={true}
                                 />
                             </Form.Item>
@@ -261,7 +216,7 @@ function BillManagement() {
                         <Col span={8}>
                             <Form.Item label='Trạng thái' name='status'>
                                 <Select>
-                                    {ORDER_STATUS.map(item => <Option key={item.status} value={item.status}>{item.name}</Option>)}
+                                    {ADVISORY_STATUS.map(item => <Option key={item.status} value={item.status}>{item.name}</Option>)}
                                 </Select>
                             </Form.Item>
                         </Col>
@@ -279,14 +234,14 @@ function BillManagement() {
                     <Button type='primary' htmlType="submit">Tìm kiếm</Button>
                 </Form>
             </Card>
-             Tìm thấy <strong>{total}</strong> đơn hàng
+             Tìm thấy <strong>{total}</strong> yêu cầu tư vấn
             <Pagination
                 onChange={(page) => handleSearch(page)}
                 total={total}
                 current={currentPage}
             />
             <Table
-                rowKey={record => record.bill_id}
+                rowKey={record => record.advisory_id}
                 bordered={true}
                 columns={columns}
                 dataSource={data}
@@ -302,4 +257,4 @@ function BillManagement() {
     )
 }
 
-export default BillManagement;
+export default AdvisoryManagement;

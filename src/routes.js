@@ -12,6 +12,7 @@ import AddAuthor from './components/AddAuthor'
 import ListSale from './components/ListSale'
 import AddSale from './components/AddSale'
 import BillManagement from './components/BillManagement'
+import AdvisoryManagement from './components/AdvisoryManagement'
 
 import {
     AppstoreOutlined,
@@ -22,7 +23,8 @@ import {
     HomeOutlined,
     SolutionOutlined,
     TagsOutlined,
-    ScheduleOutlined
+    ScheduleOutlined,
+    QuestionOutlined
 } from '@ant-design/icons'
 //parent: -1 - firstlayer - submenu
 //parent: -2 -firstlayer - menuitem
@@ -207,6 +209,15 @@ const router = [
         key: 53,
         parent: 10,
         isMenu: false,
+    },
+    {
+        path: '/advisory',
+        key: 54,
+        parent: 50,
+        isMenu: true,
+        icon: <QuestionOutlined />,
+        component: AdvisoryManagement,
+        title: 'Tư vấn khách hàng',
     },
     {
         path: '/bill',

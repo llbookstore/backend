@@ -20,7 +20,6 @@ const BillDetails = ({ id, showBillDetail, setShowBillDetail }) => {
     useEffect(() => {
         const getUserOrder = async () => {
             const getOrder = await callApi(`bill/${id}`, 'GET');
-            console.log(getOrder)
             if (getOrder && getOrder.status === 1) {
                 setOrderData(getOrder.data);
             }

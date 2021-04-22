@@ -65,3 +65,31 @@ export const paymentTypes = [
         title: 'Thẻ Visa/Master Card',
     },
 ]
+
+export const ADVISORY_STATUS = [
+    {
+        status: -1,
+        name: 'Tất cả',
+        color: 'white'
+    },
+    {
+        status: 0,
+        name: 'Đã hủy',
+        color: 'tomato'
+    },
+    {
+        status: 1,
+        name: 'Đang chờ xử lý',
+        color: 'blue'
+    },
+    {
+        status: 2,
+        name: 'Đang xử lý',
+        color: 'yellow'
+    },
+    {
+        status: 3,
+        name: 'Đã xử lý xong',
+        color: 'violet'
+    }
+]
