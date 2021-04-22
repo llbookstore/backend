@@ -16,3 +16,52 @@ export const LANGUAGES = [
     'Tiếng Trung',
     'Tiếng Anh'
 ]
+
+export const ORDER_STATUS = [
+    {
+        status: -2,
+        name: 'Tất cả',
+        color: 'white'
+    },
+    {
+        status: -1,
+        name: 'Đã hủy',
+        color: 'tomato'
+    },
+    {
+        status: 0,
+        name: 'Đang chờ xử lý',
+        color: 'blue'
+    },
+    {
+        status: 1,
+        name: 'Đã xác nhận đơn hàng',
+        color: 'yellow'
+    },
+    {
+        status: 2,
+        name: 'Đang chuyển hàng',
+        color: 'violet'
+    },
+    {
+        status: 3,
+        name: 'Giao hàng thành công',
+        color: 'green'
+    },
+
+]
+
+export const paymentTypes = [
+    {
+        key: 0,
+        title: 'Thanh toán bằng tiền mặt khi nhận hàng'
+    },
+    {
+        key: 1,
+        title: 'Thẻ ATM có Internet Banking',
+    },
+    {
+        key: 2,
+        title: 'Thẻ Visa/Master Card',
+    },
+]

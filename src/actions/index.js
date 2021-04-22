@@ -42,3 +42,4 @@ export const getCategories = (category) => {
         category
     }
 }
+

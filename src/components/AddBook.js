@@ -318,8 +318,10 @@ const AddBook = (props) => {
                                     <Select
                                         showSearch
                                         optionFilterProp="children"
-                                        filterOption={(input, option) =>
-                                            option.children[0].toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        filterOption={(input, option) =>{
+                                            console.log(input, option);
+                                            return option.children.props.children[0].toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                        }
                                         }
                                     >
                                         {

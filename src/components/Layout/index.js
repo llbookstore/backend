@@ -39,6 +39,7 @@ const LayoutPage = (props) => {
             onGetCategories(res.data.rows)
         }
     }
+
     useEffect(() => {
         getAuthors();
         getSalesAPI();
@@ -89,7 +90,7 @@ const mapDispatchToProps = (dispatch) => {
         onGetAuthors: (author) => dispatch(getAuthor(author)),
         onGetSales: (sales) => dispatch(getSales(sales)),
         onGetPublishingHouse: (publishing_house) => dispatch(getPublishingHouse(publishing_house)),
-        onGetCategories: (category) => dispatch(getCategories(category)),
+        onGetCategories: (category) => dispatch(getCategories(category))
     }
 }
 export default connect(null, mapDispatchToProps)(LayoutPage);

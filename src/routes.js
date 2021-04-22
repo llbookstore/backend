@@ -11,6 +11,7 @@ import ListAuthor from './components/ListAuthor'
 import AddAuthor from './components/AddAuthor'
 import ListSale from './components/ListSale'
 import AddSale from './components/AddSale'
+import BillManagement from './components/BillManagement'
 
 import {
     AppstoreOutlined,
@@ -20,8 +21,11 @@ import {
     ApartmentOutlined,
     HomeOutlined,
     SolutionOutlined,
-    TagsOutlined 
+    TagsOutlined,
+    ScheduleOutlined
 } from '@ant-design/icons'
+//parent: -1 - firstlayer - submenu
+//parent: -2 -firstlayer - menuitem
 const router = [
     //book
     {
@@ -203,7 +207,16 @@ const router = [
         key: 53,
         parent: 10,
         isMenu: false,
-    }
+    },
+    {
+        path: '/bill',
+        key: 100,
+        parent: -2,
+        isMenu: true,
+        icon: <ScheduleOutlined />,
+        component: BillManagement,
+        title: 'Quản lý đơn hàng',
+    },
 ]
 
 export default router;

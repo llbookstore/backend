@@ -30,8 +30,22 @@ export default function SiderComponent() {
                         </SubMenu>
                         )
                 }
+                {
+                    routes
+                        .filter(item => item.parent === -2)
+                        .map(item =>
+                            <Menu.Item
+                                key={item.key}
+                                icon={item.icon}
+                                title={item.title}
+                                onClick={() => history.push(item.path)}
+                            >
+                                {item.title}
+                            </Menu.Item>
+                        )
+                }
 
             </Menu>
-        </Sider>
+        </Sider >
     )
 }
