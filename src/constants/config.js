@@ -93,3 +93,10 @@ export const ADVISORY_STATUS = [
         color: 'violet'
     }
 ]
+
+export const NEWS_STATUS = [
+    { status: -1, name: 'Tất cả', color: 'white' },
+    { status: 0, name: 'Đã xóa', color: 'tomato' },
+    { status: 2, name: 'Nháp', color: 'black' },
+    { status: 1, name: 'Hoạt động', color: 'lime ' }
+]

@@ -13,6 +13,8 @@ import ListSale from './components/ListSale'
 import AddSale from './components/AddSale'
 import BillManagement from './components/BillManagement'
 import AdvisoryManagement from './components/AdvisoryManagement'
+import ListNews from './components/ListNews'
+import AddNews from './components/AddNews'
 
 import {
     AppstoreOutlined,
@@ -24,7 +26,8 @@ import {
     SolutionOutlined,
     TagsOutlined,
     ScheduleOutlined,
-    QuestionOutlined
+    QuestionOutlined,
+    ContainerOutlined
 } from '@ant-design/icons'
 //parent: -1 - firstlayer - submenu
 //parent: -2 -firstlayer - menuitem
@@ -174,6 +177,32 @@ const router = [
         component: AddSale,
         key: 42,
         parent: 40,
+        isMenu: false,
+    },//news
+    {
+        path: '/news',
+        exact: true,
+        component: ListNews,
+        key: 45,
+        parent: 1,
+        isMenu: true,
+        icon: <ContainerOutlined />,
+        title: 'Quản lý tin tức'
+    },
+    {
+        path: '/news/add',
+        exact: true,
+        component: AddNews,
+        key: 46,
+        parent: 45,
+        isMenu: false,
+    },
+    {
+        path: '/news/edit/:newsIdUpdate',
+        exact: true,
+        component: AddNews,
+        key: 47,
+        parent: 45,
         isMenu: false,
     },
     //users
