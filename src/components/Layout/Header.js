@@ -17,7 +17,7 @@ function HeaderComponent(props) {
         <Header className="header">
             <Row className='header__container'>
                 <Col>
-                    <div className="header__logo" >LLBook store</div>
+                    <div className="header__logo" >Sách trí tuệ</div>
                 </Col>
                 <Col>
                     {user.account_name}

@@ -79,7 +79,7 @@ const LayoutPage = (props) => {
                 </Layout>
             </Layout>
 
-            <Footer style={{ textAlign: 'center' }}>LLBookStore - Admin Page</Footer>
+            <Footer style={{ textAlign: 'center' }}>Trang Admin - Sách trí tuệ</Footer>
 
         </>
     )
