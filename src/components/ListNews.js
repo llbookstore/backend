@@ -204,7 +204,7 @@ const ListNews = () => {
                 current={currentPage}
             />
             <Table
-                rowKey={record => record.author_id}
+                rowKey={record => record.news_id}
                 bordered={true}
                 columns={columns}
                 dataSource={data}

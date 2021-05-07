@@ -15,6 +15,7 @@ import BillManagement from './components/BillManagement'
 import AdvisoryManagement from './components/AdvisoryManagement'
 import ListNews from './components/ListNews'
 import AddNews from './components/AddNews'
+import ReviewManagement from './components/ReviewManagement'
 
 import {
     AppstoreOutlined,
@@ -27,7 +28,8 @@ import {
     TagsOutlined,
     ScheduleOutlined,
     QuestionOutlined,
-    ContainerOutlined
+    ContainerOutlined,
+    CommentOutlined 
 } from '@ant-design/icons'
 //parent: -1 - firstlayer - submenu
 //parent: -2 -firstlayer - menuitem
@@ -247,6 +249,15 @@ const router = [
         icon: <QuestionOutlined />,
         component: AdvisoryManagement,
         title: 'Tư vấn khách hàng',
+    },
+    {
+        path: '/review',
+        key: 55,
+        parent: 50,
+        isMenu: true,
+        icon: <CommentOutlined />,
+        component: ReviewManagement,
+        title: 'Quản lý đánh giá sách',
     },
     {
         path: '/bill',

@@ -100,3 +100,8 @@ export const NEWS_STATUS = [
     { status: 2, name: 'Nháp', color: 'black' },
     { status: 1, name: 'Hoạt động', color: 'lime ' }
 ]
+export const REVIEW_STATUS = [
+    { status: -1, name: 'Tất cả', color: 'white' },
+    { status: 0, name: 'Đang chờ xét duyệt', color: 'lightblue' },
+    { status: 1, name: 'Đã duyệt', color: 'green' },
+]

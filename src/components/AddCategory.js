@@ -9,7 +9,6 @@ import {
     Col,
     Select,
     message,
-    InputNumber,
     Card,
 } from 'antd'
 
@@ -111,12 +110,10 @@ const AddCategory = ({ category }) => {
     const onFinish = async (values) => {
         const {
             name,
-            quantity = 0,
             group_id
         } = values;
         const data = {
             name,
-            quantity,
             group_id
         }
         if (!catIdUpdate) {
@@ -185,13 +182,6 @@ const AddCategory = ({ category }) => {
                                     hasFeedback
                                 >
                                     <Input autoFocus />
-                                </Form.Item>
-                                <Form.Item
-                                    name="quantity"
-                                    label="Số lượng sách"
-                                    hasFeedback
-                                >
-                                    <InputNumber min={0} />
                                 </Form.Item>
                                 <Form.Item
                                     name="group_id"
