@@ -150,9 +150,15 @@ const AddSale = () => {
                                 <Form.Item
                                     name="date"
                                     label="Thời gian khuyến mại"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng nhập thời gian khuyến mại!',
+                                        }
+                                    ]}
                                     hasFeedback
                                 >
-                                   <RangePicker showTime format='DD/MM/YYYY hh:mm:ss'/>
+                                    <RangePicker showTime format='DD/MM/YYYY hh:mm:ss' />
                                 </Form.Item>
                                 <Form.Item {...tailFormItemLayout}>
                                     <Button type="primary" htmlType="submit" size="large">

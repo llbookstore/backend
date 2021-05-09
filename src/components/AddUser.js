@@ -46,6 +46,7 @@ const tailFormItemLayout = {
 const allAccountTypes = [
     { id: 0, value: 'Tài khoản thường' },
     { id: 1, value: 'Tài khoản admin' },
+    { id: 2, value: 'Tài khoản nhân viên' },
 ]
 const AddUser = () => {
     const { accIdUpdate } = useParams();
@@ -88,7 +89,7 @@ const AddUser = () => {
             password,
             email,
             phone,
-            type = 0,
+            type,
         } = values;
         const data = {
             username,
@@ -112,7 +113,7 @@ const AddUser = () => {
             }
             catch (err) {
                 console.log(err)
-                message.error('Rất tiếc hiện tại không thể thêm sách.')
+                message.error('Rất tiếc hiện tại không thể thêm tài khoản.')
             }
         }
         else {
@@ -136,8 +137,8 @@ const AddUser = () => {
     const onSubmitSetPassword = async (values) => {
         const { newPassword } = values;
         try {
-            const res = await callApi(`account/${accIdUpdate}/change-password`, 'PUT', {password: newPassword});
-            if(res && res.status === 1) {
+            const res = await callApi(`account/${accIdUpdate}/change-password`, 'PUT', { password: newPassword });
+            if (res && res.status === 1) {
                 message.success('Thay đổi mật khẩu thành công');
             }
             setShowModalSetPassword(false);
@@ -156,6 +157,7 @@ const AddUser = () => {
                             form={form}
                             name="AddUser"
                             onFinish={onFinish}
+                            initialValues={{type: 1}}
                             scrollToFirstError
                             style={{ width: '80%' }}
                         >
@@ -244,20 +246,16 @@ const AddUser = () => {
                             >
                                 <Input />
                             </Form.Item>
-                            {
-                                accIdUpdate &&
-                                <Form.Item
-                                    name="type"
-                                    label='Loại tài khoản'
-                                >
-                                    <Select>
-                                        {
-                                            allAccountTypes.map(item => <Select.Option key={item.id} value={item.id} >{item.value}</Select.Option>)
-                                        }
-                                    </Select>
-                                </Form.Item>
-
-                            }
+                            <Form.Item
+                                name="type"
+                                label='Loại tài khoản'
+                            >
+                                <Select>
+                                    {
+                                        allAccountTypes.map(item => <Select.Option key={item.id} value={item.id} >{item.value}</Select.Option>)
+                                    }
+                                </Select>
+                            </Form.Item>
                             <Form.Item {...tailFormItemLayout}>
                                 <Row justify='space-around'>
                                     <Col>

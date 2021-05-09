@@ -201,6 +201,7 @@ function BillManagement() {
                         <Button
                             onClick={() => handleClickHandleReq(record.bill_id, record.status)}
                             style={{ marginRight: '20px', background: 'lightgreen' }}
+                            disabled={record.status === 3}
                         >
                             Xử lý
                         </Button>

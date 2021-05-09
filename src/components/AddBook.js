@@ -19,8 +19,10 @@ import { Editor } from '@tinymce/tinymce-react';
 import { UploadOutlined } from '@ant-design/icons'
 import { useHistory, useParams } from 'react-router-dom'
 import { callApi, getImageURL } from '../utils/callApi'
+import { getAuthor, getPublishingHouse, getSales, getCategories } from '../actions/index'
 import { timestampToDate, momentObjectToDateString, timestampToMomentObject } from '../utils/common'
 import { LANGUAGES, BOOK_FORMATS, TINY_API_KEY } from '../constants/config'
+
 import UnFindPage from './UnFindPage'
 const formItemLayout = {
     labelCol: {
@@ -55,12 +57,46 @@ const tailFormItemLayout = {
 const { Option } = Select;
 const AddBook = (props) => {
     const { author, sale, publishing_house, category } = props;
+    const { onGetAuthors, onGetPublishingHouse, onGetSales, onGetCategories } = props;
     const { bookIdUpdate } = useParams();
     const [form] = Form.useForm();
     const [coverImgFile, setCoverImgFile] = useState(null);
     const [validPage, setValidPage] = useState(true);
     const [bookDescription, setBookDescription] = useState('');
     const history = useHistory();
+
+    useEffect(() => {
+        const getAuthors = async () => {
+            const res = await callApi('author', 'GET', { row_per_page: 100000 });
+            if (res && res.status === 1) {
+                onGetAuthors(res.data.rows)
+            }
+        }
+        const getSalesAPI = async () => {
+            const res = await callApi('sale', 'GET', { row_per_page: 100000 });
+            if (res && res.status === 1) {
+                onGetSales(res.data.rows)
+            }
+        }
+        const getPublishingHouseAPI = async () => {
+            const res = await callApi('publishing_house', 'GET', { row_per_page: 100000 });
+            if (res && res.status === 1) {
+                onGetPublishingHouse(res.data.rows)
+            }
+        }
+        const getCategoriesAPI = async () => {
+            const res = await callApi('category', 'GET', { row_per_page: 1000000 });
+            if (res && res.status === 1) {
+                onGetCategories(res.data.rows)
+            }
+        }
+        getAuthors();
+        getSalesAPI();
+        getPublishingHouseAPI();
+        getCategoriesAPI();
+        // eslint-disable-next-line
+    }, []);
+
     useEffect(() => {
         if (bookIdUpdate) {
             const getBookUpdate = async () => {
@@ -189,8 +225,11 @@ const AddBook = (props) => {
                         message.success('Đã thêm sách thành công!');
                         setCoverImgFile(null);
                         setBookDescription('');
-                        form.resetFields();
+                       // form.resetFields();
                     }
+                }
+                if (res && res.status === 0) {
+                    message.warn(res.msg);
                 }
             }
             else {
@@ -318,8 +357,7 @@ const AddBook = (props) => {
                                     <Select
                                         showSearch
                                         optionFilterProp="children"
-                                        filterOption={(input, option) =>{
-                                            console.log(input, option);
+                                        filterOption={(input, option) => {
                                             return option.children.props.children[0].toLowerCase().indexOf(input.toLowerCase()) >= 0
                                         }
                                         }
@@ -341,19 +379,7 @@ const AddBook = (props) => {
                                 >
                                     <Input />
                                 </Form.Item>
-                                <Form.Item
-                                    name="published_date"
-                                    label='Ngày xuất bản'
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Vui lòng nhập ngày xuất bản',
-                                        }
-                                    ]}
-                                    hasFeedback
-                                >
-                                    <DatePicker format='DD/MM/YYYY' placeholder='DD/MM/YYYY' />
-                                </Form.Item>
+
                                 <Form.Item
                                     name="publisher"
                                     label='Nhà xuất bản'
@@ -368,7 +394,24 @@ const AddBook = (props) => {
                                 >
                                     <Input />
                                 </Form.Item>
-
+                                <Form.Item
+                                    name="price"
+                                    label='Giá bìa'
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng nhập giá bìa',
+                                        }
+                                    ]}
+                                    hasFeedback
+                                >
+                                    <InputNumber
+                                        min={0}
+                                        style={{ width: '100%' }}
+                                        formatter={value => `${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`}
+                                        parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                    />
+                                </Form.Item>
                             </Col>
                             <Col lg={12} >
                                 <Form.Item
@@ -412,24 +455,6 @@ const AddBook = (props) => {
                                     </div>
                                 </Form.Item>
                                 <Form.Item
-                                    name="price"
-                                    label='Giá bìa'
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Vui lòng nhập giá bìa',
-                                        }
-                                    ]}
-                                    hasFeedback
-                                >
-                                    <InputNumber
-                                        min={0}
-                                        style={{ width: '100%' }}
-                                        formatter={value => `${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`}
-                                        parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                                    />
-                                </Form.Item>
-                                <Form.Item
                                     name="publishing_id"
                                     label="Nhà phát hành"
                                     rules={[
@@ -457,6 +482,19 @@ const AddBook = (props) => {
                                                 </Option>)
                                         }
                                     </Select>
+                                </Form.Item>
+                                <Form.Item
+                                    name="published_date"
+                                    label='Ngày phát hành'
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Vui lòng nhập ngày phát hành',
+                                        }
+                                    ]}
+                                    hasFeedback
+                                >
+                                    <DatePicker format='DD/MM/YYYY' placeholder='DD/MM/YYYY' />
                                 </Form.Item>
                                 <Form.Item
                                     name='categories'
@@ -494,13 +532,13 @@ const AddBook = (props) => {
                                             sale.map(item =>
                                                 <Option key={item.sale_id} value={item.sale_id}>
                                                     Giảm:
-                                        <span style={{ color: 'green', fontWeight: 600 }}>
+                                                     <span style={{ color: 'green', fontWeight: 600 }}>
                                                         {item.percent}%
-                                        </span>
+                                                    </span>
                                                     <Space>
                                                         <span style={{ color: 'tomato' }}>
                                                             [{timestampToDate(item.date_start)}-{timestampToDate(item.date_end)}]
-                                            </span>
+                                                    </span>
                                                         {!item.active && <Tag color='error' style={{ fontWeight: 600 }}>Inactive</Tag>}
                                                     </Space>
                                                 </Option>)
@@ -663,5 +701,13 @@ const AddBook = (props) => {
 const mapStateToProps = ({ author, sale, publishing_house, category }) => {
     return { author, sale, publishing_house, category }
 }
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onGetAuthors: (author) => dispatch(getAuthor(author)),
+        onGetSales: (sales) => dispatch(getSales(sales)),
+        onGetPublishingHouse: (publishing_house) => dispatch(getPublishingHouse(publishing_house)),
+        onGetCategories: (category) => dispatch(getCategories(category))
+    }
+}
 
-export default connect(mapStateToProps)(AddBook);
+export default connect(mapStateToProps, mapDispatchToProps)(AddBook);

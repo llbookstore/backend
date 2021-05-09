@@ -126,6 +126,9 @@ const AddCategory = ({ category }) => {
                     if (res && res.code === '410')
                         message.warn(`${res.msg}`);
                 }
+                if (res && res.status === 0) {
+                    message.warn(res.msg);
+                }
 
             }
             catch (err) {

@@ -8,7 +8,8 @@ export const PATTERN = {
 
 export const BOOK_FORMATS = [
     'Bìa mềm',
-    'Bìa cứng'
+    'Bìa cứng',
+    'Thẻ học thông minh'
 ]
 
 export const LANGUAGES = [
