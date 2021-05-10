@@ -14,17 +14,19 @@ export const momentObjectToTimestamp = (momentObject) => {
 }
 
 export const timestampToMomentObject = (time) => {
-    return moment(time*1000)
+    return moment(time * 1000)
 }
 export const getCurrentTimestamp = () => {
     return Math.ceil(new Date().getTime() / 1000);
 }
 
-export const isAuth = (token) => {
-    try{
+export const isAuth = (token, typeAuth) => {
+    try {
         const { exp, type } = jwt.decode(token);
-        return exp > getCurrentTimestamp() && type === 1;
-    }catch(err){
+        if(typeAuth && !typeAuth.find(item => item === type)) 
+            return false;
+        return exp > getCurrentTimestamp() && type >= 1;
+    } catch (err) {
         console.log(err);
         return false;
     }

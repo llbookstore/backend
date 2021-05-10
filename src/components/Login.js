@@ -33,7 +33,7 @@ const Login = (props) => {
             if (data.token) {
                 //get user data
                 const { userId, type } = jwt.decode(data.token);
-                if(type !== 1) {
+                if(type <= 0) {
                     message.warn('Đăng nhập không thành công!')
                 }
                 else{

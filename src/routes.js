@@ -16,7 +16,6 @@ import AdvisoryManagement from './components/AdvisoryManagement'
 import ListNews from './components/ListNews'
 import AddNews from './components/AddNews'
 import ReviewManagement from './components/ReviewManagement'
-
 import {
     AppstoreOutlined,
     ReadOutlined,
@@ -29,8 +28,9 @@ import {
     ScheduleOutlined,
     QuestionOutlined,
     ContainerOutlined,
-    CommentOutlined 
+    CommentOutlined
 } from '@ant-design/icons'
+
 //parent: -1 - firstlayer - submenu
 //parent: -2 -firstlayer - menuitem
 const router = [
@@ -41,6 +41,7 @@ const router = [
         parent: -1,
         icon: <AppstoreOutlined />,
         title: 'Quản lý nội dung',
+        type: [1, 2]
     },
     {
         path: '/book',
@@ -50,7 +51,8 @@ const router = [
         parent: 1,
         isMenu: true,
         icon: <ReadOutlined />,
-        title: 'Quản lý sách'
+        title: 'Quản lý sách',
+        type: [1, 2]
     },
     {
         path: '/book/add',
@@ -59,6 +61,7 @@ const router = [
         key: 3,
         parent: 1,
         isMenu: false,
+        type: [1, 2]
     },
     {
         path: '/book/edit/:bookIdUpdate',
@@ -67,6 +70,7 @@ const router = [
         key: 4,
         parent: 1,
         isMenu: false,
+        type: [1, 2]
     },
     //category
     {
@@ -77,7 +81,8 @@ const router = [
         parent: 1,
         isMenu: true,
         icon: <ApartmentOutlined />,
-        title: 'Quản lý danh mục sách'
+        title: 'Quản lý danh mục sách',
+        type: [1, 2]
     },
     {
         path: '/category/add',
@@ -86,6 +91,7 @@ const router = [
         key: 11,
         parent: 10,
         isMenu: false,
+        type: [1, 2]
     },
     {
         path: '/category/edit/:catIdUpdate',
@@ -94,6 +100,7 @@ const router = [
         key: 12,
         parent: 10,
         isMenu: false,
+        type: [1, 2]
     },
     {
         path: '/category/arrange',
@@ -102,6 +109,7 @@ const router = [
         key: 13,
         parent: 10,
         isMenu: false,
+        type: [1, 2]
     },//publishing-house
     {
         path: '/publishing-house',
@@ -111,7 +119,8 @@ const router = [
         parent: 1,
         isMenu: true,
         icon: <HomeOutlined />,
-        title: 'Quản lý nhà phát hành'
+        title: 'Quản lý nhà phát hành',
+        type: [1, 2]
     },
     {
         path: '/publishing-house/add',
@@ -120,6 +129,7 @@ const router = [
         key: 21,
         parent: 20,
         isMenu: false,
+        type: [1, 2]
     },
     {
         path: '/publishing-house/edit/:pubIdUpdate',
@@ -128,6 +138,7 @@ const router = [
         key: 22,
         parent: 20,
         isMenu: false,
+        type: [1, 2]
     },//author
     {
         path: '/author',
@@ -137,7 +148,8 @@ const router = [
         parent: 1,
         isMenu: true,
         icon: <SolutionOutlined />,
-        title: 'Quản lý tác giả'
+        title: 'Quản lý tác giả',
+        type: [1, 2]
     },
     {
         path: '/author/add',
@@ -146,6 +158,7 @@ const router = [
         key: 31,
         parent: 30,
         isMenu: false,
+        type: [1, 2]
     },
     {
         path: '/author/edit/:authorIdUpdate',
@@ -154,6 +167,7 @@ const router = [
         key: 32,
         parent: 30,
         isMenu: false,
+        type: [1, 2]
     },//sale
     {
         path: '/sale',
@@ -163,7 +177,8 @@ const router = [
         parent: 1,
         isMenu: true,
         icon: <TagsOutlined />,
-        title: 'Quản lý khuyến mại'
+        title: 'Quản lý khuyến mại',
+        type: [1, 2]
     },
     {
         path: '/sale/add',
@@ -172,6 +187,7 @@ const router = [
         key: 41,
         parent: 40,
         isMenu: false,
+        type: [1, 2]
     },
     {
         path: '/sale/edit/:saleIdUpdate',
@@ -180,6 +196,7 @@ const router = [
         key: 42,
         parent: 40,
         isMenu: false,
+        type: [1, 2]
     },//news
     {
         path: '/news',
@@ -189,7 +206,8 @@ const router = [
         parent: 1,
         isMenu: true,
         icon: <ContainerOutlined />,
-        title: 'Quản lý tin tức'
+        title: 'Quản lý tin tức',
+        type: [1, 2]
     },
     {
         path: '/news/add',
@@ -198,6 +216,7 @@ const router = [
         key: 46,
         parent: 45,
         isMenu: false,
+        type: [1, 2]
     },
     {
         path: '/news/edit/:newsIdUpdate',
@@ -206,6 +225,7 @@ const router = [
         key: 47,
         parent: 45,
         isMenu: false,
+        type: [1, 2]
     },
     //users
     {
@@ -214,6 +234,7 @@ const router = [
         parent: -1,
         icon: <UserOutlined />,
         title: 'Users',
+        type: [1, 2]
     },
     {
         path: '/account',
@@ -224,6 +245,7 @@ const router = [
         icon: <UnorderedListOutlined />,
         title: 'Quản lý tài khoản',
         isMenu: true,
+        type: [1]
     },
     {
         path: '/account/add',
@@ -232,6 +254,7 @@ const router = [
         key: 52,
         parent: 50,
         isMenu: false,
+        type: [1]
     },
     {
         path: '/account/:accIdUpdate',
@@ -240,6 +263,7 @@ const router = [
         key: 53,
         parent: 10,
         isMenu: false,
+        type: [1]
     },
     {
         path: '/advisory',
@@ -249,6 +273,7 @@ const router = [
         icon: <QuestionOutlined />,
         component: AdvisoryManagement,
         title: 'Tư vấn khách hàng',
+        type: [1, 2]
     },
     {
         path: '/review',
@@ -258,6 +283,7 @@ const router = [
         icon: <CommentOutlined />,
         component: ReviewManagement,
         title: 'Quản lý đánh giá sách',
+        type: [1, 2]
     },
     {
         path: '/bill',
@@ -267,6 +293,7 @@ const router = [
         icon: <ScheduleOutlined />,
         component: BillManagement,
         title: 'Quản lý đơn hàng',
+        type: [1, 2]
     },
 ]
 

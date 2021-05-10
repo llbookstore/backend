@@ -35,6 +35,7 @@ const allAccountTypes = [
     { id: -1, value: 'Tất cả' },
     { id: 0, value: 'Tài khoản thường' },
     { id: 1, value: 'Tài khoản admin' },
+    { id: 2, value: 'Tài khoản nhân viên' },
 ]
 // function useQuery() {
 //     return new URLSearchParams(useLocation().search);
@@ -133,6 +134,7 @@ const ListUser = () => {
                                 <strong>Loại TK: </strong> <br />
                                 {record.type === 1 && <Tag color='magenta'>Admin </Tag>}
                                 {record.type === 0 && <Tag color='lightblue'>Thường</Tag>}
+                                {record.type === 2 && <Tag color='violet'>Nhân viên</Tag>}
                             </Col>
                         </Row>
                         <br />
