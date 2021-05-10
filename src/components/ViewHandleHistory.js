@@ -37,10 +37,16 @@ export default function ViewHandleHistory(props) {
             key: 'status',
             align: 'center',
             dataIndex: 'status',
-            render: (status) => (
+            render: (status, record) => (
                 <p>
                     {
                         allStatus.find(item => item.status === status).name
+                    }
+                    {
+                        record.is_paid === 1 && <>
+                            <br />
+                            <b>Đã thanh toán</b>
+                        </>
                     }
                 </p>
             )

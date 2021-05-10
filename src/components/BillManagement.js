@@ -44,6 +44,9 @@ function BillManagement() {
     //handle a bill
     const [note, setNote] = useState('');
     const [status, setStatus] = useState();
+    const [isPaid, setIsPaid] = useState(false);
+    const [isReallyPaid, setIsReallyPaid] = useState(false);
+    const [showChangePaid, setShowChangePaid] = useState(false);
     const [currentBillId, setCurrentBillId] = useState();
     const [showHandleBill, setShowHandleBill] = useState(false);
     //bill detail
@@ -94,10 +97,15 @@ function BillManagement() {
         setCurrentPage(1);
     }
     //handle bill
-    const handleClickHandleReq = (billId, status) => {
+    const handleClickHandleReq = (billId, status, is_paid, payment_method) => {
         setNote('');
         setCurrentBillId(billId);
         setStatus(status);
+        setIsPaid(is_paid);
+        if(payment_method > 0)
+            setShowChangePaid(true);
+        else setShowChangePaid(false);
+        if (is_paid === 1) setIsReallyPaid(true);
         setShowHandleBill(true);
     }
     const handleSubmitBill = async () => {
@@ -105,6 +113,7 @@ function BillManagement() {
             note,
             status
         }
+        if (isPaid) dataHandle.is_paid = 1;
         try {
             const res = await callApi(`/bill/${currentBillId}`, 'PUT', dataHandle);
             if (res && res.status === 1) {
@@ -163,9 +172,16 @@ function BillManagement() {
             key: 'status',
             dataIndex: 'status',
             align: 'center',
-            render: (text) => (
+            render: (text, record) => (
                 <>
                     <Tag color={findStatusOrder(text).color}>{findStatusOrder(text).name}</Tag>
+                    <br />
+                    {
+                        record.is_paid !== null && record.is_paid === 1
+                        && <><strong>Đã thanh toán </strong>
+                            {`[${timestampToDate(record.paid_time, 'DD/MM/YYYY HH:mm')}]`}
+                        </>
+                    }
                 </>
             )
         },
@@ -199,7 +215,7 @@ function BillManagement() {
                 <>
                     <Row justify='space-between'>
                         <Button
-                            onClick={() => handleClickHandleReq(record.bill_id, record.status)}
+                            onClick={() => handleClickHandleReq(record.bill_id, record.status, record.is_paid, record.payment_method)}
                             style={{ marginRight: '20px', background: 'lightgreen' }}
                             disabled={record.status === 3}
                         >
@@ -226,6 +242,10 @@ function BillManagement() {
                 setNote={setNote}
                 status={status}
                 setStatus={setStatus}
+                setIsPaid={setIsPaid}
+                isPaid={isPaid}
+                isReallyPaid={isReallyPaid}
+                showChangePaid={showChangePaid}
                 allStatus={ORDER_STATUS.filter(item => item.status !== -2)}
                 showHandleReq={showHandleBill}
                 setShowHandleReq={setShowHandleBill}

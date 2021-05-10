@@ -16,6 +16,7 @@ import AdvisoryManagement from './components/AdvisoryManagement'
 import ListNews from './components/ListNews'
 import AddNews from './components/AddNews'
 import ReviewManagement from './components/ReviewManagement'
+import Dashboard from './components/Dashboard'
 import {
     AppstoreOutlined,
     ReadOutlined,
@@ -284,6 +285,16 @@ const router = [
         component: ReviewManagement,
         title: 'Quản lý đánh giá sách',
         type: [1, 2]
+    },
+    {
+        path: '/dashboard',
+        key: 99,
+        parent: -2,
+        isMenu: true,
+        icon: <ScheduleOutlined />,
+        component: Dashboard,
+        title: 'Dashboard',
+        type: [1]
     },
     {
         path: '/bill',

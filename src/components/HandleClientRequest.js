@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Select, Modal, Row, Col, Input } from 'antd';
+import { Button, Select, Modal, Row, Col, Input, Switch, Popover, Popconfirm } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
 export default function HandleClientRequest(props) {
@@ -11,7 +11,11 @@ export default function HandleClientRequest(props) {
         note,
         setNote,
         status,
-        setStatus
+        setStatus,
+        isPaid,
+        setIsPaid,
+        showChangePaid,
+        isReallyPaid
     } = props;
     return (
         <Modal
@@ -42,6 +46,34 @@ export default function HandleClientRequest(props) {
                     </Select>
                 </Col>
             </Row>
+            {
+                showChangePaid &&
+                <Row gutter={24} style={{ paddingBottom: '10px' }}>
+                    <Col lg={6}><b>Đã thanh toán</b></Col>
+                    <Col lg={18}>
+                        {
+                            isPaid ? <Switch
+                                checked={isPaid}
+                                onChange={checked => setIsPaid(checked)}
+                                disabled={isReallyPaid}
+                            />
+                                :
+                                <Popover content='Xác nhận đã thanh toán?'>
+                                    <Popconfirm
+                                        title="Bạn có chắc xác nhận đã thanh toán chứ? Nếu xác nhận sẽ không thể hủy bỏ được!"
+                                        onConfirm={() => setIsPaid(true)}
+                                        onCancel={() => setIsPaid(false)}
+                                        okText='Đồng ý'
+                                        cancelText='Không'
+
+                                    >
+                                        <Switch checked={isPaid} />
+                                    </Popconfirm>
+                                </Popover>
+                        }
+                    </Col>
+                </Row>
+            }
             <Row gutter={24}>
                 <Col lg={6}><b>Ghi chú</b></Col>
                 <Col lg={18}>

@@ -16,6 +16,20 @@ function SiderComponent({ user }) {
                 defaultOpenKeys={['1', '50']}
                 style={{ height: '100%', borderRight: 0 }}
             >
+                 {
+                    routes
+                        .filter(item => item.parent === -2 && item.type.find(i => i === type))
+                        .map(item =>
+                            <Menu.Item
+                                key={item.key}
+                                icon={item.icon}
+                                title={item.title}
+                                onClick={() => history.push(item.path)}
+                            >
+                                {item.title}
+                            </Menu.Item>
+                        )
+                }
                 {
                     routes
                         .filter(item => item.parent === -1 && item.type.find(i => i === type))
@@ -32,21 +46,6 @@ function SiderComponent({ user }) {
                         </SubMenu>
                         )
                 }
-                {
-                    routes
-                        .filter(item => item.parent === -2 && item.type.find(i => i === type))
-                        .map(item =>
-                            <Menu.Item
-                                key={item.key}
-                                icon={item.icon}
-                                title={item.title}
-                                onClick={() => history.push(item.path)}
-                            >
-                                {item.title}
-                            </Menu.Item>
-                        )
-                }
-
             </Menu>
         </Sider >
     )

@@ -114,6 +114,8 @@ const BillDetails = ({ id, showBillDetail, setShowBillDetail }) => {
                             </>
                         }
                         <strong>Hình thức thanh toán:</strong> {getPaymentType(orderData.payment_method)}
+                        <br />
+                        {orderData.is_paid === 1 ? <><b>Đã thanh toán</b> ({timestampToDate(orderData.paid_time, 'DD/MM/YYYY HH:mm')})</> : ''}
                     </Card>
                     <Table
                         columns={columns}
