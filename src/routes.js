@@ -16,7 +16,7 @@ import AdvisoryManagement from './components/AdvisoryManagement'
 import ListNews from './components/ListNews'
 import AddNews from './components/AddNews'
 import ReviewManagement from './components/ReviewManagement'
-import Dashboard from './components/Dashboard'
+import Dashboard from './components/Dashboard/index'
 import {
     AppstoreOutlined,
     ReadOutlined,

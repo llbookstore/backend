@@ -18,7 +18,7 @@ import {
     Card,
     Tag,
 } from 'antd';
-import { timestampToDate, momentObjectToTimestamp } from '../utils/common'
+import { timestampToDate, momentObjectToDateString } from '../utils/common'
 import { DATE_FORMAT, ORDER_STATUS } from '../constants/config'
 import { callApi } from '../utils/callApi'
 import ViewHandleHistory from './ViewHandleHistory'
@@ -72,11 +72,12 @@ function BillManagement() {
         };
         if (query) dataParams.q = query;
         if (status > -2) dataParams.status = status;
-        if (startTime) dataParams.date_start = momentObjectToTimestamp(startTime);
-        if (endTime) dataParams.date_end = momentObjectToTimestamp(endTime);
+        if (startTime) dataParams.date_start = momentObjectToDateString(startTime, 'MM-DD-YYYY');
+        if (endTime) dataParams.date_end = momentObjectToDateString(endTime, 'MM-DD-YYYY');
         const res = await callApi('bill', 'GET', dataParams);
         if (res && res.status === 1) {
             const data = res.data.rows;
+            console.log(res.data)
             for (let item of data) {
                 item.handle_history = item.handle_history ? JSON.parse(item.handle_history) : [];
             }
